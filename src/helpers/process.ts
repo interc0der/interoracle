@@ -2,8 +2,9 @@
 
 import constants from './constants'
 import { Request } from '../interface/request'
-import { Interoracle } from './ws'
+import Interoracle from './ws'
 import init from './init'
+import axios from 'axios'
 
 /**
  * Initializes a empty matrix to park latest price
@@ -11,7 +12,17 @@ import init from './init'
  * @returns { Array } RxC matrix 
  */
 const createEmptyArray = (r:number, c:number, fill:any) => {
-    let initArray:any = Array(r).fill(Array(r).fill([fill]))
+    //let initArray:any = [ ...new Array(c).fill([...new Array(r).fill(fill)])]
+    let initArray = []
+
+    for (let i=0; i<c; i++) {
+        let row =[]
+        for (let j=0; j<r; j++) {
+            row.push(fill)
+        }
+        initArray.push(row)
+    }
+    
     return initArray
 }
 
@@ -36,24 +47,23 @@ const organizeByExchange = (input:Request) => {
         let heartBeatBoolean = input.heartbeat
         let subscribe_data_type = input.subscribe_data_type
         let rows = constants.trackedExchanges.length
-        let handledArray:any[][] = createEmptyArray(rows, 4, undefined);
-
-        for ( let i = 0; i<subscribe_data_type.length; i++) {
-                let type = subscribe_data_type[i];
-                for (let j =0; j<constants.trackedExchanges.length; j++) {
-                    handledArray[i][j]=[type];
-                }
+        let handledArray:any[][] = createEmptyArray(1,rows, undefined);
+   
+        for (let j =0; j<constants.trackedExchanges.length; j++) {
+            handledArray[j][0]=input.subscribe_data_type[0];
         }
-    
+
         if (input.subscribe_filter_symbol_id) { 
             for ( let i = 0; i<subscribe_data_type.length; i++) {
-                input.subscribe_filter_symbol_id.map((index) => {
-                    let inputArray = index.split("_");
+                console.log(subscribe_data_type.length)
+                input.subscribe_filter_symbol_id.forEach((pair) => {
+                    let inputArray = pair.split("_");
                     let exchangeIndex = constants.trackedExchanges.indexOf(inputArray[0])
-                    handledArray[i][exchangeIndex].push(inputArray)
+                    handledArray[exchangeIndex].push(inputArray)
                 })
             } 
         }
+
         return handledArray
 
     } catch (e){
@@ -61,17 +71,16 @@ const organizeByExchange = (input:Request) => {
     }
 }
 
-const initializeWS = (handledArray:any) => {
+const initializeWS = (channels:any, handledArray:any) => {
     //Subscribe to websockets TRADES
     try{
         for (let i =0; i<constants.trackedExchanges.length; i++) {
-            if (handledArray[0][i].length>1 ) new Interoracle(constants.trackedExchanges[i], handledArray[0][i])
+            if (handledArray[i].length>1 ) new Interoracle(constants.trackedExchanges[i], channels, handledArray[i])
         }
     }catch(error) {
         console.log(error)
     }
 }  
-
 
 const instantiate = async (exchange:string, pairs:string[]) => {
     let channels:any,url:any
@@ -93,11 +102,81 @@ const instantiate = async (exchange:string, pairs:string[]) => {
     return [channels,url]
 }
 
+const getPairIndices = async (channels:string[], pairs:any) => {
+
+     let process = pairs.map((pair:string[], index:number) => {
+        if (index==0) return
+        return pair.join("_")
+    }).filter(Boolean)
+
+    let xrpChannels = channels.map((channel) => {if (channel.indexOf("XRP") > -1) {return channel} else return }).filter(Boolean)
+    let ltcChannels = channels.map((channel) => {if (channel.indexOf("LTC") > -1) {return channel} else return }).filter(Boolean)
+    let adaChannels = channels.map((channel) => {if (channel.indexOf("ADA") > -1) {return channel} else return }).filter(Boolean)
+    let algoChannels = channels.map((channel) => {if (channel.indexOf("ALGO") > -1) {return channel} else return }).filter(Boolean)
+    let btcChannels = channels.map((channel) => {if (channel.indexOf("BTC") > -1) {return channel} else return }).filter(Boolean)
+    let ethChannels = channels.map((channel) => {if (channel.indexOf("ETH") > -1) {return channel} else return }).filter(Boolean)
+    let bchChannels = channels.map((channel) => {if (channel.indexOf("BCH") > -1) {return channel} else return }).filter(Boolean)
+    let dogeChannels = channels.map((channel) => {if (channel.indexOf("DOGE") > -1) {return channel} else return }).filter(Boolean)
+    let xlmChannels = channels.map((channel) => {if (channel.indexOf("XLM") > -1) {return channel} else return }).filter(Boolean)
+    let dgbChannels = channels.map((channel) => {if (channel.indexOf("DGB") > -1) {return channel} else return }).filter(Boolean)
+    let filChannels = channels.map((channel) => {if (channel.indexOf("FIL") > -1) {return channel} else return }).filter(Boolean)
+    
+    let escapeRegExpMatch = (s:string) => {
+        return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+      };
+
+    let isExactMatch = (str:string, match:string) => {
+      return new RegExp(`\\b${escapeRegExpMatch(match)}\\b`).test(str)
+      }
+
+    let array:number[] = []
+    channels.forEach((channel:string) => {
+        process.forEach((pair:string) => {
+            if (isExactMatch(channel, pair) == true) {
+                if (channel.indexOf("XRP")> -1) array.push(xrpChannels.indexOf(channel))
+                if (channel.indexOf("LTC")> -1) array.push(ltcChannels.indexOf(channel))
+                if (channel.indexOf("BTC")> -1) array.push(btcChannels.indexOf(channel))
+                if (channel.indexOf("ETH")> -1) array.push(ethChannels.indexOf(channel))
+                if (channel.indexOf("XLM")> -1) array.push(xlmChannels.indexOf(channel))
+                if (channel.indexOf("ADA")> -1) array.push(adaChannels.indexOf(channel))
+                if (channel.indexOf("ALGO")> -1) array.push(algoChannels.indexOf(channel))
+                if (channel.indexOf("DGB")> -1) array.push(dgbChannels.indexOf(channel))
+                if (channel.indexOf("BCH")> -1) array.push(bchChannels.indexOf(channel))
+                if (channel.indexOf("FIL")> -1) array.push(filChannels.indexOf(channel))
+                if (channel.indexOf("DOGE")> -1) array.push(dogeChannels.indexOf(channel))
+              }
+        })
+    })
+    return [process, array]
+}
+
+
+const getTickers = async (channels:string[]) => {
+
+    let poloniex_api = "https://poloniex.com/public?command=returnTicker"
+    let poloniex_id = await axios.get ( poloniex_api ) ;
+    let idArray = Object.entries(poloniex_id.data);
+  
+    let tickerKey:string[][] = channels.map((ticker:string) => {
+            let index:any = idArray.find((entry) => entry[0] == ticker)
+            let returnData:string[] = []
+            if (index == undefined ) returnData = [ticker, '']
+            if (index != undefined ) returnData = [ticker, index[1].id]
+            return returnData
+    })
+  
+   return tickerKey
+}
+
+
+
 const process = {
     createEmptyArray,
     organizeByExchange,
     initializeWS,
-    instantiate
+    instantiate,
+    getPairIndices,
+    getTickers 
 }
 
 export default process

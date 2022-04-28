@@ -1,3 +1,6 @@
+# Ignore haters
+haters
+
 # Logs
 logs
 *.log
@@ -102,3 +105,23 @@ dist
 
 # TernJS port file
 .tern-port
+
+client/build
+client/node_modules
+
+api/node_modules
+api/.env
+api/env.sample
+
+db/database
+
+nginx/nginx-config
+nginx/ssl
+nginx/webroot
+nginx/LICENSE
+
+db/mongo-init.js
+
+chrome-extension/build
+
+.env
