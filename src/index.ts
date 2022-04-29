@@ -1,4 +1,5 @@
 import process from './helpers/process';
+import { Interoracle }  from './helpers/ws';
 
 const subscribe_channels = [
   // XRP Enabled Exchanges
@@ -314,23 +315,16 @@ const init = (request:any) => {
 
 init(request)
 
-
-/* const callback = () => {
-  main()
-}
-
-const main = () => {
-  setTimeout(() => {
-          console.log('logging XRP')
-          console.log(Interoracle.prototype.XRP) 
+  setInterval(() => {
+/*           console.log('logging XRP')
+          console.log(Interoracle.prototype.XRP)  */
           console.log('logging BTC')
           console.log(Interoracle.prototype.BTC)
-          console.log('logging ETH')
+/*           console.log('logging ETH')
           console.log(Interoracle.prototype.ETH)
           console.log('logging XLM')
-          console.log(Interoracle.prototype.XLM) 
-          callback()
+          console.log(Interoracle.prototype.XLM)  */
+
   }, 20000)
-}
-main() */
+
 

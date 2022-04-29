@@ -83,6 +83,7 @@ const binance = (evt:any, channels:string[], type:string, sequence:number) => {
       return array.filter(Boolean)[0]
   
     } catch (error) {
+      console.log(error)
           return
     }
 };
@@ -127,20 +128,29 @@ const bitso = (evt:any, channels:string[], type:string, sequence:number) => {
 }
 
 const bitstamp = (evt:any, channels:string[], type:string, sequence:number) => {
+   
     try {
-        const resp = JSON.parse(evt);
+        const resp = JSON.parse(evt.data);
   
         if (resp == undefined) return;
         if (resp.data.price == undefined) return;
 
-        let array = channels.map((ticker:any) => {
-          if(resp.channel.indexOf(ticker) > -1 ) {
-            let initTicker = ticker
+        let array = channels.map((ticker:string) => {
+          
+          if( resp.channel == ticker) {
+            let initTicker = ticker.split('_')[2]
+            let asset=''
+            if (initTicker.length == 6) asset = initTicker.slice(0,-3).toUpperCase();
 
-            if (ticker.length = 6) initTicker = ticker+'a'
+            if (  initTicker.includes('usdt')
+                  || initTicker.includes('usdc')
+                  || initTicker.includes('busd')) asset = initTicker.slice(0,-4).toUpperCase();
 
-            var asset = initTicker.slice(0,-4).toUpperCase();
-            var base = ticker.replace(asset.toLowerCase(),'').toUpperCase();
+            if (  !initTicker.includes('usdt')
+                  && !initTicker.includes('usdc')
+                  && !initTicker.includes('busd')) asset = initTicker.slice(0,-3).toUpperCase();
+
+            var base = initTicker.replace(asset.toLowerCase(),'').toUpperCase();
 
             return ({
                     "type": type,
@@ -153,15 +163,17 @@ const bitstamp = (evt:any, channels:string[], type:string, sequence:number) => {
                     "size": resp.data.amount,
                     "taker_side": "BUY"
                   })
-                }
+          }
 
-              return
+          return
+
           })
 
           return array.filter(Boolean)[0]
 
       } catch (error) {
-          return
+        console.log(error)
+        return
     }
 }
 
@@ -228,13 +240,14 @@ const kraken = (evt:any, channels:string[], type:string, sequence:number) => {
       return array.filter(Boolean)[0]
 
     } catch (error) {
+      console.log(error)
         return
     }
 }
 
 const coinbase = (evt:any, channels:string[], type:string, sequence:number) => {
     try {
-        const resp = JSON.parse(evt);
+        const resp = JSON.parse(evt.data);
         
         if (resp == undefined) return;
         if (resp.price == undefined) return;
@@ -272,6 +285,8 @@ const coinbase = (evt:any, channels:string[], type:string, sequence:number) => {
         return array.filter(Boolean)[0]
 
     } catch (error) {
+      console.log(evt)
+      console.log(error)
           return
     }
 }
@@ -317,6 +332,7 @@ const kucoin = (evt:any, channels:string[], type:string, sequence:number) => {
         return array.filter(Boolean)[0]
 
       } catch (error) {
+        console.log(error)
           return
     }
 }
@@ -325,10 +341,12 @@ const ftx = (evt:any, channels:string[], type:string, sequence:number) => {
     try {
         const resp = JSON.parse(evt.data);
         if( resp.type == "subscribed") return;
-        let array = channels.map ((ticker:string) => {
+        let array = channels.map((ticker:string) => {
+
           if(resp.market.indexOf(ticker) > -1 ) {
             let initTicker
             let asset
+
             if (ticker.length == 7) {
               initTicker = ticker+'a'
               asset = initTicker.slice(0,-5)
@@ -347,23 +365,25 @@ const ftx = (evt:any, channels:string[], type:string, sequence:number) => {
             weightedInput.map((resp: PriceArrayType) => {
                 sum += resp.amount
             })
+
                   
             return ({
-            "type": type,
-            "symbol_id": `FTX_SPOT_${asset}_${base}`,
-            "sequence": ++sequence,
-            "time_exchange": resp.data[0].time,
-            "time_wakedapi": Date.now(),
-            "uuid": "770C7A3B-7258-4441-8182-83740F3E2457",
-            "price": price,
-            "size": sum,
-            "taker_side": resp.data[0].side.toUpperCase()
-          })
+                "type": type,
+                "symbol_id": `FTX_SPOT_${asset}_${base}`,
+                "sequence": ++sequence,
+                "time_exchange": resp.data[0].time,
+                "time_wakedapi": Date.now(),
+                "uuid": "770C7A3B-7258-4441-8182-83740F3E2457",
+                "price": price,
+                "size": sum,
+                "taker_side": resp.data[0].side.toUpperCase()
+            })
         }
         return 
       })
       return array.filter(Boolean)[0]
     } catch (error) {
+      console.log(error)
         return
     }
 }
@@ -504,6 +524,7 @@ const okex = (evt:any, channels:string[], type:string, sequence:number) => {
         })
         return array.filter(Boolean)[0]
   } catch (error) {
+    console.log(error)
       return
     }
 }
@@ -537,6 +558,7 @@ const bitfinex = (evt:any, channels:string[], type:string, sequence:number) => {
       }
       return
   } catch (error) {
+    console.log(error)
         return 
 }
 }
@@ -570,6 +592,7 @@ const poloniex = (tickers: string[][], evt:any, channels:string[], type:string, 
         })
         return array.filter(Boolean)[0]
     } catch (error) {
+      console.log(error)
         return
     }
 } 
@@ -591,7 +614,7 @@ const handleIncomingMsg = (ws:WebSocket,exchange:string,evt:any, channels:string
   if (exchange == 'GATEIO') response = gate(evt, channels, type, sequence)
   if (exchange == 'OKEX') response = okex(evt, channels, type, sequence)
   if (exchange == 'BITFINEX') response = bitfinex(evt, channels, type, sequence)
-  if (exchange == 'POLONIEX') response = poloniex(tickers, evt, channels, type, sequence)  
+  if (exchange == 'POLONIEX') response = poloniex(tickers, evt, channels, type, sequence) 
   return response
 }
 export default handleIncomingMsg;

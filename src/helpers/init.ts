@@ -61,10 +61,11 @@ const bitstamp = (input:string[]) => {
       channels.push((input[i][2]+input[i][3]).toLowerCase());
     }
 
-  const url = 'wss://ws.bitstamp.net'
-  const listenToCurrancies = channels.map(pair => {
-            return ("live_trades"+"_"+pair)
-  })
+    const url = 'wss://ws.bitstamp.net'
+    
+    const listenToCurrancies = channels.map(pair => {
+                return ("live_trades"+"_"+pair)
+    })
 
     return [listenToCurrancies, url]
 }
@@ -174,7 +175,7 @@ const okex = (input:string[]) => {
           channels.push((input[i][2]+"-"+input[i][3]))
     }
 
-    let url:string = `wss://real.okex.com:8443/ws/v3`
+    let url:string = `wss://ws.okx.com:8443/ws/v5/public`
 
     return [channels, url]
 }

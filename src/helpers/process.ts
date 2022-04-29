@@ -2,7 +2,7 @@
 
 import constants from './constants'
 import { Request } from '../interface/request'
-import Interoracle from './ws'
+import {Interoracle} from './ws'
 import init from './init'
 import axios from 'axios'
 
