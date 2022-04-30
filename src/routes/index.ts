@@ -4,6 +4,6 @@ import controller from '../controller/index'
 const router:Router = express.Router()
 
 router
-  .get(`/markets/:token&:reset`, controller.getPrice)
+  .get(`/markets/:token&:reset`, )
 
 module.exports = router;

@@ -2,7 +2,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 const origins = [
-            `http://localhost:${process.env.API_PORT}`,
+            `http://localhost:4000`,
           ]
 
 const routes = [

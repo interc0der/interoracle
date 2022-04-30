@@ -3,6 +3,7 @@
     "display": "Base Template",
     "exclude": ["node_modules"],
     "include": ["src/**/*", "types/**/*"],
+    "files": ["src/interface/graphql/graphql.d.ts"],
     "buildOptions": {},
     "watchOptions": {
       "watchFile": "useFsEvents",
@@ -22,7 +23,7 @@
       "noFallthroughCasesInSwitch": true,
       "noImplicitAny":true,
       "noImplicitOverride":true,
-      "noImplicitReturns":true,
+      "noImplicitReturns":false,
       "noPropertyAccessFromIndexSignature":true,
       "noUncheckedIndexedAccess":false,
       "noUnusedLocals":false,
