@@ -77,6 +77,11 @@ const initializeWS = (channels:any, handledArray:any) => {
         for (let i =0; i<constants.trackedExchanges.length; i++) {
             if (handledArray[i].length>1 ) new Interoracle(constants.trackedExchanges[i], channels, handledArray[i])
         }
+
+        for (let i =0; i<constants.trackedCurrencies.length; i++) {
+            Interoracle.prototype[constants.trackedCurrencies[i]] = process.createEmptyArray(30, 1, undefined)
+        }
+
     }catch(error) {
         console.log(error)
     }
@@ -84,6 +89,7 @@ const initializeWS = (channels:any, handledArray:any) => {
 
 const instantiate = async (exchange:string, pairs:string[]) => {
     let channels:any,url:any
+
     if (exchange == 'BINANCE') [channels, url] = init.binance(pairs)
     if (exchange == 'BINANCEUS') [channels,url] = init.binanceUS(pairs)
     if (exchange == 'COINBASE') [channels,url] =init.coinbase(pairs)

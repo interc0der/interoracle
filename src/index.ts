@@ -2,6 +2,7 @@ import process from './helpers/process';
 import { Interoracle }  from './helpers/ws';
 
 const subscribe_channels = [
+
   // XRP Enabled Exchanges
   "BINANCE_SPOT_XRP_USDT",
   //"BINANCE_SPOT_XRP_BUSD",
@@ -220,11 +221,11 @@ const subscribe_channels = [
 
   // BTC Enabled Exchanges
   "BINANCE_SPOT_BTC_USDT",
-  //"BINANCE_SPOT_BTC_BUSD",
-  //"BINANCE_SPOT_BTC_USDC",
+  "BINANCE_SPOT_BTC_BUSD",
+  "BINANCE_SPOT_BTC_USDC",
   "BINANCEUS_SPOT_BTC_USDT",
-  //"BINANCEUS_SPOT_BTC_BUSD",
-  //"BINANCEUS_SPOT_BTC_USDC",
+  "BINANCEUS_SPOT_BTC_BUSD",
+  "BINANCEUS_SPOT_BTC_USDC",
   "KUCOIN_SPOT_BTC_USDT",
   "GATEIO_SPOT_BTC_USDT",
   "HUOBIPRO_SPOT_BTC_USD" ,
@@ -236,10 +237,10 @@ const subscribe_channels = [
   "BITFINEX_SPOT_BTC_USD" ,
   "BITFINEX_SPOT_BTC_USDT" ,
   "POLONIEX_SPOT_BTC_USDT" ,
-  //"POLONIEX_SPOT_BTC_USDC" ,
+  "POLONIEX_SPOT_BTC_USDC" ,
   "BITSO_SPOT_BTC_USD" ,
   "CRYPTO_SPOT_BTC_USDT" ,
-  //"CRYPTO_SPOT_BTC_USDC" ,
+  "CRYPTO_SPOT_BTC_USDC" ,
   "OKEX_SPOT_BTC_USD",
   "OKEX_SPOT_BTC_USDT",
   //"OKEX_SPOT_BTC_USDC",
@@ -325,6 +326,6 @@ init(request)
           console.log('logging XLM')
           console.log(Interoracle.prototype.XLM)  */
 
-  }, 20000)
+  }, 1000)
 
 

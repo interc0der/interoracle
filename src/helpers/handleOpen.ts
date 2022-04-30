@@ -79,7 +79,7 @@ const ftx = (ws:any,channels:string[]) => {
     'market': channels[i]
 })
 
-  return ws.send(message);
+  ws.send(message);
 }
 
 }
@@ -120,7 +120,7 @@ const gate = (ws:any,channels:string[]) => {
 
 const okex = (ws:any,channels:string[]) => {
 
-  ws.send(JSON.stringify({
+/*   ws.send(JSON.stringify({
       "op": "subscribe",
       "args": [
         {
@@ -132,7 +132,7 @@ const okex = (ws:any,channels:string[]) => {
           "instId": "LTC-USD-200327"
         }
       ]
-  }))
+  })) */
 }
 
 const bitfinex = (ws:any,channels:string[]) => {

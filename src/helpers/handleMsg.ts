@@ -66,7 +66,7 @@ const binance = (evt:any, channels:string[], type:string, sequence:number) => {
 
             return({
                 "type": type,
-                "symbol_id": `BINANCE_SPOT_${asset}_${base}`,
+                "symbol_id": `BINANCEUS_SPOT_${asset}_${base}`,
                 "sequence": ++sequence,
                 "time_exchange": resp.data.T,
                 "time_wakedapi": Date.now(),
@@ -100,9 +100,18 @@ const bitso = (evt:any, channels:string[], type:string, sequence:number) => {
         let array = channels.map((ticker:any) => {
           if(resp.book.indexOf(ticker) > -1 ) {
           let initTicker = ticker
-          if (ticker.length == 7) initTicker = ticker+'a'
-          let asset = initTicker.slice(0,-5).toUpperCase();
+          let asset='';
+
+          if (  initTicker.includes('usdt')
+                || initTicker.includes('usdc')
+                || initTicker.includes('busd')) asset = initTicker.slice(0,-5).toUpperCase();
+
+          if (  !initTicker.includes('usdt')
+                && !initTicker.includes('usdc')
+                && !initTicker.includes('busd')) asset = initTicker.slice(0,-4).toUpperCase();
+
           var base = ticker.replace(asset.toLowerCase()+"_",'').toUpperCase();
+
           if(resp.payload[0].t == 0) {var taker = "BUY"} else {var taker = "SELL"}
 
            return ({
@@ -139,8 +148,7 @@ const bitstamp = (evt:any, channels:string[], type:string, sequence:number) => {
           
           if( resp.channel == ticker) {
             let initTicker = ticker.split('_')[2]
-            let asset=''
-            if (initTicker.length == 6) asset = initTicker.slice(0,-3).toUpperCase();
+            let asset='';
 
             if (  initTicker.includes('usdt')
                   || initTicker.includes('usdc')
@@ -189,22 +197,22 @@ const kraken = (evt:any, channels:string[], type:string, sequence:number) => {
             if(resp[3].indexOf(ticker) > -1 ) {
                 let asset
 
-                if( ticker.length < 8 ) asset = ticker.slice(0,-4)
-                if( ticker.length >=8 ) asset = ticker.slice(0,-5)
+                if (ticker.includes('USDT')
+                || ticker.includes('USDC')
+                || ticker.includes('BUSD')
+                ) {
+                  asset = ticker.slice(0,-5)
+                } else {
+                  asset = ticker.slice(0,-4)
+                }
 
                 if( ticker.indexOf("XBT") > -1 ) asset = "BTC"
                 if( ticker.indexOf("XDG") > -1 ) asset = "DOGE"
 
-                if ( ticker.indexOf("ALGO") > -1  || ticker.indexOf("DOGE") > -1  ) {
-                  if ( ticker.length< 9 ) asset = ticker.slice(0,-4)
-                  if ( ticker.length >= 9 ) asset = ticker.slice(0,-5)
-                }
-                
                 let base;
+                base = ticker.replace(asset+"/",'');
                 if( ticker.indexOf("XBT") > -1 )  base = ticker.replace("XBT/",'')
                 if( ticker.indexOf("XDG") > -1 ) base = ticker.replace("XDG/",'')
-                if( ticker.indexOf("XDG") == -1 
-                    && ticker.indexOf("XBT") == -1 ) base = ticker.replace(asset+"/",'');
 
                 let taker;
                 if (resp[1][0][3] == "b") taker = "BUY" 
@@ -256,16 +264,16 @@ const coinbase = (evt:any, channels:string[], type:string, sequence:number) => {
             if(resp.product_id.indexOf(ticker) > -1 ) {
               let asset
 
-              if(ticker.indexOf("ALGO") > -1   || ticker.indexOf("DOGE") > -1  ) {
-                if (ticker.length< 9) asset = ticker.slice(0,-4)
-                if (ticker.length>=9) asset = ticker.slice(0,-5) 
+              if (ticker.includes('USDT')
+              || ticker.includes('USDC')
+              || ticker.includes('BUSD')
+              ) {
+                asset = ticker.slice(0,-5)
+              } else {
+                asset = ticker.slice(0,-4)
               }
 
-              if(ticker.length < 8) asset = ticker.slice(0,-4)
-              if(ticker.length >= 8) asset = ticker.slice(0,-5)
-
               var base = ticker.replace(asset+"-",'');
-              
 
                return ({
                 "type": type,
@@ -285,7 +293,6 @@ const coinbase = (evt:any, channels:string[], type:string, sequence:number) => {
         return array.filter(Boolean)[0]
 
     } catch (error) {
-      console.log(evt)
       console.log(error)
           return
     }
@@ -304,13 +311,15 @@ const kucoin = (evt:any, channels:string[], type:string, sequence:number) => {
             if(resp.topic.indexOf(ticker) > -1 ) {
             
               let asset
-              if(ticker.indexOf("ALGO") > -1  || ticker.indexOf("DOGE") > -1 ) {
-                  if (ticker.length < 9) asset = ticker.slice(0,-4)
-                  if (ticker.length >= 9) asset = ticker.slice(0,-5) 
+ 
+              if (ticker.includes('USDT')
+              || ticker.includes('USDC')
+              || ticker.includes('BUSD')
+              ) {
+                asset = ticker.slice(0,-5)
+              } else {
+                asset = ticker.slice(0,-4)
               }
-
-              if(ticker.length < 8) asset = ticker.slice(0,-4)
-              if(ticker.length >= 8) asset = ticker.slice(0,-5)
 
               var base = ticker.replace(asset+"-",'');
 
@@ -341,18 +350,23 @@ const ftx = (evt:any, channels:string[], type:string, sequence:number) => {
     try {
         const resp = JSON.parse(evt.data);
         if( resp.type == "subscribed") return;
+        if( resp.type == "error") {
+          console.log('FTX:', resp)
+          return};
+
         let array = channels.map((ticker:string) => {
 
           if(resp.market.indexOf(ticker) > -1 ) {
-            let initTicker
             let asset
 
-            if (ticker.length == 7) {
-              initTicker = ticker+'a'
-              asset = initTicker.slice(0,-5)
+            if (ticker.includes('USDT')
+            || ticker.includes('USDC')
+            || ticker.includes('BUSD')
+            ) {
+              asset = ticker.slice(0,-5)
+            } else {
+              asset = ticker.slice(0,-4)
             }
-
-            if (ticker.indexOf('DOGE') > -1) asset = 'DOGE'
                     
             let base = ticker.replace(asset+"/",'');
 
@@ -366,7 +380,6 @@ const ftx = (evt:any, channels:string[], type:string, sequence:number) => {
                 sum += resp.amount
             })
 
-                  
             return ({
                 "type": type,
                 "symbol_id": `FTX_SPOT_${asset}_${base}`,
@@ -534,14 +547,27 @@ const bitfinex = (evt:any, channels:string[], type:string, sequence:number) => {
     let msg = JSON.parse(evt.data)
 
     if( msg.event == "subscribed") return //console.log(`BITFINEX Subscribing to ${msg.pair}`);
+
+    // Heart beat send response back to client
     if( msg[1] == "hb") return;
-    
+  
         try{ 
             if (msg[1] == "te") {
 
-            var pair = msg[2].slice(11);
-            var asset = pair.slice(0, -3);
-            var base = pair.replace(asset,'');
+            let ticker = msg[2].split('-')[1].slice(1)
+            let asset=''
+
+            if (ticker.includes('USDT')
+            || ticker.includes('USDC')
+            || ticker.includes('BUSD')
+            ) {
+              asset = ticker.slice(0,-4);
+            } else {
+              asset = ticker.slice(0,-3);
+            }
+                    
+            var base = ticker.replace(asset,'');
+
             if (msg[msg.length-1] > 0) {var taker = "BUY"} else {var taker = "SELL"}
 
             return ({
