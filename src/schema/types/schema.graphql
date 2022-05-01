@@ -1,0 +1,12 @@
+type Query {
+  weightedAvg(token: String): String
+}
+
+type Mutation {
+  createMessage(pair: String): String
+}
+
+schema {
+  query: Query
+  mutation: Mutation
+}

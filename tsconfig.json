@@ -28,7 +28,7 @@
       "noUncheckedIndexedAccess":false,
       "noUnusedLocals":false,
       "noUnusedParameters":false,
-      "strictBindCallApply":true,
+      "strictBindCallApply":false,
       "strictFunctionTypes":true,
       "strictNullChecks": true,
       "strictPropertyInitialization": true,

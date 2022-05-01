@@ -29,10 +29,29 @@ const dataTypes = [
     "exrate", 	
 ]
 
+interface binanceWeightsType {
+    [index: string]:any
+}
+
+const binanceWeights:binanceWeightsType = {
+    XRP: 18,
+    LTC: 15,
+    BTC: 10,
+    ALGO: 40,
+    ETH: 30,
+    ADA: 10,
+    BCH: 18,
+    DGB: 50,
+    FIL: 24,
+    XLM: 27,
+    DOGE: 8
+}
+
 const constants = {
     trackedCurrencies,
     trackedExchanges,
-    dataTypes
+    dataTypes,
+    binanceWeights
 }
 
 export default constants

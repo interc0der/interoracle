@@ -28,7 +28,7 @@ const binanceUS = (input:string[]) => {
     for (let i = 1; i<input.length; i++) {
       channels.push((input[i][2]+input[i][3]).toLowerCase());
     }
-
+    
     var endpointPath = '';
     for (let i=0; i < channels.length; i++ ) {
         if (i===0) {

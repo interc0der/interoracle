@@ -4,10 +4,13 @@ import http from 'http';
 import cors, {CorsRequest} from 'cors';
 import constants from './routes/constants'
 import path from 'path'
-import schema from './schema';
 import { ApolloServer } from 'apollo-server-express';
 import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core';
 //import { ApolloServer, gql } from 'apollo-server';
+
+import rootValue from './schema/root/index'
+import resolvers from './schema/resolvers/index'
+import typeDefs from './schema/types/index'
 
 dotenv.config();
 
@@ -23,7 +26,9 @@ async function startApolloServer() {
   const httpServer = http.createServer(app);
   
   const server = new ApolloServer({
-    schema,
+    typeDefs,
+    resolvers,
+    //rootValue,
     plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
   });
 
