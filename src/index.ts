@@ -301,31 +301,15 @@ const subscribe_channels = [
   "COINBASE_SPOT_FIL_USD" 
 ]
 
-let request = {
-  "type": "hello",
-  "apikey": "THIS-IS-SAMPLE-KEY",
-  "heartbeat": false,
-  "subscribe_data_type": ["trade"],
-  "subscribe_filter_symbol_id": subscribe_channels
+export const request = {
+  type: "hello",
+  apikey: "THIS-IS-SAMPLE-KEY",
+  heartbeat: false,
+  subscribe_data_type: ["trade"],
+  subscribe_filter_symbol_id: subscribe_channels
 }
 
-const init = (request:any) => {
+export const init = () => {
   let array:any = process.organizeByExchange(request)
   process.initializeWS(subscribe_channels, array)
 }
-
-init(request)
-
-  setInterval(() => {
-/*           console.log('logging XRP')
-          console.log(Interoracle.prototype.XRP)  */
-          console.log('logging BTC')
-          console.log(Interoracle.prototype.BTC)
-/*           console.log('logging ETH')
-          console.log(Interoracle.prototype.ETH)
-          console.log('logging XLM')
-          console.log(Interoracle.prototype.XLM)  */
-
-  }, 1000)
-
-

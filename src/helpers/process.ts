@@ -55,7 +55,6 @@ const organizeByExchange = (input:Request) => {
 
         if (input.subscribe_filter_symbol_id) { 
             for ( let i = 0; i<subscribe_data_type.length; i++) {
-                console.log(subscribe_data_type.length)
                 input.subscribe_filter_symbol_id.forEach((pair) => {
                     let inputArray = pair.split("_");
                     let exchangeIndex = constants.trackedExchanges.indexOf(inputArray[0])
@@ -79,7 +78,7 @@ const initializeWS = (channels:any, handledArray:any) => {
         }
 
         for (let i =0; i<constants.trackedCurrencies.length; i++) {
-            Interoracle.prototype[constants.trackedCurrencies[i]] = process.createEmptyArray(30, 1, undefined)
+            Interoracle.prototype[constants.trackedCurrencies[i]] = createEmptyArray(30, 3, undefined)
         }
 
     }catch(error) {
@@ -174,15 +173,11 @@ const getTickers = async (channels:string[]) => {
    return tickerKey
 }
 
-
-
-const process = {
+export default {
     createEmptyArray,
     organizeByExchange,
     initializeWS,
     instantiate,
     getPairIndices,
-    getTickers 
+    getTickers
 }
-
-export default process

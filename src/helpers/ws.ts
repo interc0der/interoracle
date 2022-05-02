@@ -41,7 +41,7 @@ class Interoracle {
         this._processURL(exchange,global,pairs)
     }
 
-    _processURL = async ( exchange:string, global: string[], pairs:string[]) => {
+    private _processURL = async ( exchange:string, global: string[], pairs:string[]) => {
         [this.str_pairs, this.indices] = await process.getPairIndices(global, pairs)
         let [channels, url] = await process.instantiate(exchange, pairs)
         if (exchange == 'POLONIEX') this.tickers = await process.getTickers(channels)
@@ -50,7 +50,7 @@ class Interoracle {
         this._connect(url)
     }
 
-    _connect = (url: string):void => {
+    private _connect = (url: string):void => {
         this.ws = new WebSocket(url); 
         this.ws.onopen = (evt:any) => this._onOpen(evt);
         this.ws.onmessage = (evt:any) => this._onMessage(evt);
@@ -59,14 +59,14 @@ class Interoracle {
     }
 
     //indicates that the connection is ready to send and receive data
-    async _onOpen(event: any): Promise<void> {
+    private async _onOpen(event: any): Promise<void> {
         console.log(this.exchange, "connected");
         let response = await handleOpen(this.exchange, this.ws, this.channels)
         if (response != undefined) console.log(response)
     }
 
     //An event listener to be called when a message is received from the server
-    async _onMessage(event: any): Promise<void> {
+    private async _onMessage(event: any): Promise<void> {
         let response = await handleIncomingMsg(
                                         this.ws,
                                         this.exchange, 
@@ -81,21 +81,27 @@ class Interoracle {
         if (response != undefined && response.price != undefined) {
             let index = this.str_pairs.indexOf(response.symbol_id)
             let global_index = this.indices[index]
+            let asset = response.symbol_id.split('_')[2]
 
             if (global_index != undefined){
-                let asset = response.symbol_id.split('_')[2]
-                this[asset][0][global_index]=[response.symbol_id.split('_')[0], response.price]
-            }                    
+                this[asset][0][global_index]=response.price
+            }
+            
+            if (global_index != undefined && response.size){
+                let prev_size = this[asset][1][global_index]
+                if (!prev_size) prev_size=0
+                this[asset][1][global_index]=response.size+prev_size
+            }      
         }
     }
 
     //An event listener to be called when an error occurs. This is a simple event named "error".
-    _onError(event: any): void {
+    private _onError(event: any): void {
         console.log(this.exchange, 'error');
     }
 
     //An event listener to be called when the WebSocket connection's readyState changes to CLOSED.
-    _onClose(event: any): void {
+    private _onClose(event: any): void {
         console.log(JSON.stringify(event.data));
     }
 }

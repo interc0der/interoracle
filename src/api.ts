@@ -11,8 +11,10 @@ import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core';
 import rootValue from './schema/root/index'
 import resolvers from './schema/resolvers/index'
 import typeDefs from './schema/types/index'
+import {init} from './index';
 
 dotenv.config();
+
 
 //const port = process.env.API_PORT || 4001;
 
@@ -43,4 +45,5 @@ async function startApolloServer() {
   console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`);
 }
 
+init()
 startApolloServer()

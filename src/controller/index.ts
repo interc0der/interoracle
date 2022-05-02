@@ -2,16 +2,13 @@
 import express, { Express, Request, Response } from 'express'
 import { Interoracle } from '../helpers/ws'
 import constants from '../helpers/constants'
+import process from '../helpers/process'
 
-const getWeightedAverage = async (/* req: Request<{  */token: string/* }>, res: Response */) => {
+const getWeightedAverage = (token: string) => {
 
-    let asset = /* req.params. */token
-    console.log(asset)
+    return Interoracle.prototype[token]
 
-    /* let data = Interoracle.prototype[asset]
-    let binanceWeight = constants.binanceWeights[asset]
-
-    let priceWeightSum = 0;
+/*     let priceWeightSum = 0;
     let weightSum = 0;
     let priceWeightSumAvg = 0;
     let priceWeightSumAvgMean = 0;
@@ -47,7 +44,7 @@ const getWeightedAverage = async (/* req: Request<{  */token: string/* }>, res: 
             array: data
         });
  */
-    return asset //PMAP Pure Mean Average Price
+    //return asset //PMAP Pure Mean Average Price */
 }
 
 /* const getWeightedAverage = async (req: Request, res: Response) => {

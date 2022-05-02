@@ -12,6 +12,7 @@ export type Scalars = {
   Float: number;
 };
 
+
 export type AuthInput = {
   password?: InputMaybe<Scalars['String']>;
   username?: InputMaybe<Scalars['String']>;

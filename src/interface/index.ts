@@ -4,3 +4,10 @@ export interface ProcessEnvType {
     API_PORT?: string;
     PWD: string;
 }
+
+export interface tempFilterExchange {
+    [index: string]:any
+    exchange?: string
+    active?:boolean
+    pairs?: string[] | undefined[]
+}
