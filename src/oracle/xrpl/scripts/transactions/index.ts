@@ -3,7 +3,7 @@ import { OfferAllFills } from './OfferAllFills'
 import { OfferFilled } from './OfferFilled'
 import { OfferCreates } from './OfferCreates'
 import { OfferCancels } from './OfferCancels'
-
+/* 
 import { Payment } from './Payment'
 import { PaymentChannelClaim } from './PaymentChannelClaim'
 import { PaymentChannelCreate } from './PaymentChannelCreate'
@@ -15,7 +15,7 @@ import { TrustSet } from './TrustSet'
 import { SetRegularKey } from './SetRegularKey'
 
 import { AccountDelete } from './AccountDelete'
-import { AccountSet } from './AccountSet'
+import { AccountSet } from './AccountSet' */
 
 export default {
     OfferPartialFills,
@@ -23,7 +23,7 @@ export default {
     OfferFilled,
     OfferCreates, 
     OfferCancels, 
-    Payment, 
+/*     Payment, 
     PaymentChannelClaim, 
     PaymentChannelCreate,
     PaymentChannelFund,
@@ -31,5 +31,5 @@ export default {
     TicketCreate,
     SetRegularKey,
     AccountDelete,
-    AccountSet
+    AccountSet */
 };

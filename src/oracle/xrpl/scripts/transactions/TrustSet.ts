@@ -1,10 +1,10 @@
 import { dropsToXrp } from 'xrpl';
-import { TransactionStream } from './../../../models/methods/subscribe';
+import { TransactionStream } from './../../models/methods/subscribe';
 import { BigNumber } from 'bignumber.js';
-import { NodeInterface} from './../models/parser/paychan';
-import { GeneralNode } from '../models/additions';
-import lib from '../lib'
-import { parseQuality } from '../lib/quality';
+import { NodeInterface} from './../../models/parser/paychan';
+import { GeneralNode } from '../../models/additions';
+import lib from '../../lib'
+import { parseQuality } from '../../lib/quality';
 
 const objectFlags = {
     lsfLowReserve: 0x00010000,

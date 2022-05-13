@@ -25,17 +25,20 @@ const request:any = {
 // Parsing method for package. See...
 const method:Method = {
   client: api, // Optional. See config file for default client and server
-  filter: "all_checks", // Optional. Default null
-  log: false // Optional. Default false
+  filter: "offers_fill_all", // Optional. Default null
+  log: true // Optional. Default false
 }
 
 let count:number = 0 //Include count if you would like to track the number of responses
 
-async function main() {
+async function main(request, method) {
+
   // If request included a stream, use a while loop to catch all new responses... 
-    if( request.command == 'subscribe') {
+  if( request.command == 'subscribe') {
+      await api.connect()
       while(true) {
-            try{
+            try{    
+                await txParser(request, method)
                 count++; 
                 const [ parsedTx ] = await once(api, 'TransactionParsed');
                 console.log(`Parse Count: ${count}`)
@@ -46,15 +49,16 @@ async function main() {
                 return await api.disconnect();
             }
         }
-    }
+    } 
     
   // If not, just preform the request and capture the response.
-    const parsedTx = await txParser({ request, method })
+    await api.connect()
+    const parsedTx = await txParser(request, method)
     console.log(parsedTx)
     return await api.disconnect();
 }
 
-main()
+main(request, method)
 
 // ------------------------------------------------//
 

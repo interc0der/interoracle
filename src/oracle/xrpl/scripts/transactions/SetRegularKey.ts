@@ -1,4 +1,4 @@
-import { TransactionStream } from './../../../models/methods/subscribe';
+import { TransactionStream } from './../../models/methods/subscribe';
 
   const lsfDisableMaster = 0x00100000
 

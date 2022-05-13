@@ -6,7 +6,7 @@ The quality, as stored in the last 64 bits of a directory index, is stored as
 the quotient of TakerPays/TakerGets. It uses drops (1e-6 XRP) for XRP values.
 */
 
-function adjustQualityForXRP(quality, takerGetsCurrency, takerPaysCurrency) {
+function adjustQualityForXRP(quality:any, takerGetsCurrency:any, takerPaysCurrency:any) {
   var numeratorShift = (takerPaysCurrency === 'XRP' ? -6 : 0)
   var denominatorShift = (takerGetsCurrency === 'XRP' ? -6 : 0)
   var shift = numeratorShift - denominatorShift
@@ -14,7 +14,7 @@ function adjustQualityForXRP(quality, takerGetsCurrency, takerPaysCurrency) {
     (new BigNumber(quality)).shiftedBy(shift).toString()
 }
 
-function parseQuality(qualityHex, takerGetsCurrency, takerPaysCurrency) {
+function parseQuality(qualityHex:any, takerGetsCurrency:any, takerPaysCurrency:any) {
   assert(qualityHex.length === 16)
   var mantissa = new BigNumber(qualityHex.substring(2), 16)
   var offset = parseInt(qualityHex.substring(0, 2), 16) - 100

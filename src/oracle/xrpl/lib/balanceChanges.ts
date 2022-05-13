@@ -4,23 +4,23 @@ import utils from './utils'
 import { dropsToXrp } from 'xrpl'
 
 
-function groupByAddress(balanceChanges) {
-  var grouped = _.groupBy(balanceChanges, function(node) {
+function groupByAddress(balanceChanges:any) {
+  var grouped = _.groupBy(balanceChanges, function(node: { address: any }) {
     return node.address
   })
-  return _.mapValues(grouped, function(group) {
-    return _.map(group, function(node) {
+  return _.mapValues(grouped, function(group: any) {
+    return _.map(group, function(node: { balance: any }) {
       return node.balance
     })
   })
 }
 
-function parseValue(value) {
+function parseValue(value:any) {
   return new BigNumber(value.value || value)
 }
 
-function computeBalanceChange(node) {
-  var value = null
+function computeBalanceChange(node:any) {
+  var value:any
   if (node.newFields.Balance) {
     value = parseValue(node.newFields.Balance)
   } else if (node.previousFields.Balance && node.finalFields.Balance) {
@@ -30,7 +30,7 @@ function computeBalanceChange(node) {
   return value === null ? null : value.isZero() ? null : value
 }
 
-function parseFinalBalance(node) {
+function parseFinalBalance(node:any) {
   if (node.newFields.Balance) {
     return parseValue(node.newFields.Balance)
   } else if (node.finalFields.Balance) {
@@ -40,7 +40,7 @@ function parseFinalBalance(node) {
 }
 
 
-function parseXRPQuantity(node, valueParser) {
+function parseXRPQuantity(node:any, valueParser:any) {
   var value = valueParser(node)
 
   if (value === null) {
@@ -57,7 +57,7 @@ function parseXRPQuantity(node, valueParser) {
   }
 }
 
-function flipTrustlinePerspective(quantity) {
+function flipTrustlinePerspective(quantity:any) {
   var negatedBalance = (new BigNumber(quantity.balance.value)).negated()
   return {
     address: quantity.balance.counterparty,
@@ -69,7 +69,7 @@ function flipTrustlinePerspective(quantity) {
   }
 }
 
-function parseTrustlineQuantity(node, valueParser) {
+function parseTrustlineQuantity(node:any, valueParser:any) {
   var value = valueParser(node)
 
   if (value === null) {
@@ -95,8 +95,8 @@ function parseTrustlineQuantity(node, valueParser) {
   return [result, flipTrustlinePerspective(result)]
 }
 
-function parseQuantities(metadata, valueParser) {
-  var values = utils.normalizeNodes(metadata).map(function(node) {
+function parseQuantities(metadata:any, valueParser:any) {
+  var values = utils.normalizeNodes(metadata).map(function(node: { entryType: string }) {
     if (node.entryType === 'AccountRoot') {
       return [parseXRPQuantity(node, valueParser)]
     } else if (node.entryType === 'RippleState') {
@@ -114,7 +114,7 @@ function parseQuantities(metadata, valueParser) {
  *  @param {Object} metadata Transaction metada
  *  @returns {Object} parsed balance changes
  */
-function parseBalanceChanges(metadata) {
+function parseBalanceChanges(metadata:any) {
   return parseQuantities(metadata, computeBalanceChange)
 }
 
@@ -126,7 +126,7 @@ function parseBalanceChanges(metadata) {
  *  @param {Object} metadata Transaction metada
  *  @returns {Object} parsed balances
  */
-function parseFinalBalances(metadata) {
+function parseFinalBalances(metadata:any) {
   return parseQuantities(metadata, parseFinalBalance)
 }
 

@@ -1,19 +1,8 @@
-import { allExchanges } from './allExchanges';
-import { allAffectedAccounts } from './allAffectedAccounts';
-import { allOffers } from './allOffers';
-import { allMemos } from './allMemos';
-import { allPaymentChannels } from './allPayChans';
-import { allPayments } from './allPayments';
-import { allBalanceChanges } from './allBalanceChanges';
-import { allEscrows } from './allEscrows';
-import { allChecks } from './allChecks';
-import { txParserInterface } from "./models/parser";
-import { txHandler } from './handler';
 import client from './helpers/client';
 
 import { Method } from 'types/oracle'
 
-const index = async (request , method?: Method | undefined) => {
+const index = async (request:any, method?: Method | undefined) => {
 
     if (!method || !method.client) {
         let api = client._init(method) 
@@ -37,4 +26,4 @@ const index = async (request , method?: Method | undefined) => {
 }
 
 
-export { index }
+export default index

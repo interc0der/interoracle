@@ -1,6 +1,6 @@
-import { getAffectedAccounts } from "./lib"
-import { TransactionStream } from './../../models/methods/subscribe';
-import { AccountsInterface } from './models/parser/account';
+import { getAffectedAccounts } from "../../lib"
+import { TransactionStream } from '../../models/methods/subscribe';
+import { AccountsInterface } from '../../models/parser/account';
 
 function allAffectedAccounts(tx:TransactionStream) {
   var accounts = new Array();

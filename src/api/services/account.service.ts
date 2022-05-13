@@ -5,7 +5,7 @@ import crypto from "crypto";
 import sendEmail from '../helpers/send-email';
 import db from '../helpers/db';
 import Role from '../helpers/role';
-import env from '../helpers/env'
+import env from '../../global/helpers/env'
 
 const secret = env['API_SECRET'] || ''
 console.log(secret)

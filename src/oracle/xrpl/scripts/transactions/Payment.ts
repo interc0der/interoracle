@@ -1,5 +1,5 @@
-import { allPayments } from '../allPayments'
-import { TransactionStream } from './../../../models/methods/subscribe';
+import { allPayments } from '../all/allPayments'
+import { TransactionStream } from './../../models/methods/subscribe';
 
 const Payment = (tx:TransactionStream) => {
   

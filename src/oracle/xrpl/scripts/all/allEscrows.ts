@@ -2,7 +2,7 @@ import { dropsToXrp } from 'xrpl';
 import { TransactionStream } from '../../models/methods/subscribe';
 import BigNumber from 'bignumber.js';
 import { GeneralNode } from '../../models/additions'
-import { EscrowInterface } from './models/parser/escrow';
+import { EscrowInterface } from '../../models/parser/escrow';
 
 const EPOCH_OFFSET = 946684800
 

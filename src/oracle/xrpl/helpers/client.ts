@@ -1,20 +1,21 @@
-import { txParser } from '../handler';
+import { txParser } from './handler';
 import { Client } from 'xrpl';
 import { modTransactionStream } from '../models/parser';
 import { TransactionStream } from '../models'
 import { default_server } from '../config'
+import { Method } from 'types/oracle'
 
 const url = default_server
 
-var method;
+var method: Method | undefined;
 var count = 0;
 
-    const _init = (handler?) => {
+    const _init = (handler?:Method) => {
         method = handler
         return new Client(url)
     }
 
-    const _setMethod = (handler?) => {
+    const _setMethod = (handler?:Method) => {
         method = handler
         return
     }

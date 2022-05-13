@@ -1,9 +1,9 @@
 import { dropsToXrp } from 'xrpl';
 import { TransactionStream } from './../../models/methods/subscribe';
-import { parseBalanceChanges } from './lib';
+import { parseBalanceChanges } from '../../lib';
 import { BigNumber } from 'bignumber.js';
 
-import { PaymentInterface } from './models/parser/payment'
+import { PaymentInterface } from '../../models/parser/payment'
 
 var allPayments = function (tx:TransactionStream) {
   var payment:PaymentInterface = {

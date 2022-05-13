@@ -1,10 +1,10 @@
 import { dropsToXrp } from 'xrpl';
 import { TransactionStream } from './../../models/methods/subscribe';
 import BigNumber from 'bignumber.js';
-import { parseQuality } from './lib/quality';
+import { parseQuality } from '../../lib/quality';
 import { GeneralNode } from './../../models/additions'
 
-import { OfferInterface, Currency } from "./models/parser/offer"
+import { OfferInterface, Currency } from "../../models/parser/offer"
 
 /**
  * OffersExercised;

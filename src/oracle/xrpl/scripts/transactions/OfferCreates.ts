@@ -1,5 +1,5 @@
-import { allOffers } from '../allOffers'
-import { TransactionStream } from '../../../models/methods/subscribe';
+import { allOffers } from '../all/allOffers'
+import { TransactionStream } from '../../models/methods/subscribe';
 
 const OfferCreates = (tx:TransactionStream) => {
   

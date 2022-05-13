@@ -1,7 +1,7 @@
-import { Client } from "src/oracle/xrpl/node_modules/xrpl/dist/npm";
+import { Client } from 'xrpl';
 
 export interface Method {
-    client: Client
-    filter: string
-    log: boolean
+    client?: Client
+    filter?: string|null
+    log?: boolean
 }

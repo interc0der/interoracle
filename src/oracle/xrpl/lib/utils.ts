@@ -3,7 +3,7 @@ import _ from 'lodash';
 import BigNumber from 'bignumber.js';
 import { dropsToXrp } from 'xrpl';
 
-function normalizeNode(affectedNode) {
+function normalizeNode(affectedNode:any) {
   var diffType = Object.keys(affectedNode)[0]
   var node = affectedNode[diffType]
   return Object.assign({}, node, {
@@ -16,14 +16,14 @@ function normalizeNode(affectedNode) {
   })
 }
 
-function normalizeNodes(metadata) {
+function normalizeNodes(metadata:any) {
   if (!metadata.AffectedNodes) {
     return []
   }
   return metadata.AffectedNodes.map(normalizeNode)
 }
 
-function parseCurrencyAmount(currencyAmount) {
+function parseCurrencyAmount(currencyAmount:any) {
   if (currencyAmount === undefined) {
     return undefined
   }
@@ -41,18 +41,18 @@ function parseCurrencyAmount(currencyAmount) {
   }
 }
 
-function isAccountField(fieldName) {
+function isAccountField(fieldName:any) {
   var fieldNames = ['Account', 'Owner', 'Destination', 'Issuer', 'Target']
   return _.includes(fieldNames, fieldName)
 }
 
-function isAmountFieldAffectingIssuer(fieldName) {
+function isAmountFieldAffectingIssuer(fieldName:any) {
   var fieldNames = ['LowLimit', 'HighLimit', 'TakerPays', 'TakerGets']
   return _.includes(fieldNames, fieldName)
 }
 
-function getAffectedAccounts(metadata) {
-  var accounts = []
+function getAffectedAccounts(metadata:any) {
+  var accounts:any = []
   _.forEach(normalizeNodes(metadata), function(node) {
     var fields = node.diffType === 'CreatedNode' ?
       node.newFields : node.finalFields

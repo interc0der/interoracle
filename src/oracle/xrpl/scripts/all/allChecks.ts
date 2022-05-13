@@ -2,7 +2,7 @@ import { dropsToXrp } from 'xrpl';
 import { TransactionStream } from '../../models/methods/subscribe';
 import BigNumber from 'bignumber.js';
 import { GeneralNode } from '../../models/additions'
-import { CheckInterface } from './models/parser/Check';
+//import { CheckInterface } from '../../models/parser/check';
 
 const EPOCH_OFFSET = 946684800
 

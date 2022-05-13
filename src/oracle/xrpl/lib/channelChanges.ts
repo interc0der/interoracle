@@ -1,7 +1,7 @@
 import utils from './utils';
 import BigNumber from 'bignumber.js';
 
-function parsePaymentChannelStatus(node) {
+function parsePaymentChannelStatus(node:any) {
   if (node.diffType === 'CreatedNode') {
     return 'created'
   }
@@ -16,7 +16,7 @@ function parsePaymentChannelStatus(node) {
   return undefined
 }
 
-function summarizePaymentChannel(node) {
+function summarizePaymentChannel(node:any) {
 
   const final = (node.diffType === 'CreatedNode') ?
     node.newFields : node.finalFields
@@ -81,9 +81,9 @@ function summarizePaymentChannel(node) {
   return summary
 }
 
-function parseChannelChanges(metadata) {
+function parseChannelChanges(metadata:any) {
   const paymentChannels = utils.normalizeNodes(metadata)
-    .filter(n => {
+    .filter((n:any) => {
       return n.entryType === 'PayChannel'
     })
 

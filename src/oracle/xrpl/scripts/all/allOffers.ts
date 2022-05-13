@@ -3,10 +3,10 @@ import { dropsToXrp } from 'xrpl';
 import { TransactionStream } from './../../models/methods/subscribe';
 
 import BigNumber from 'bignumber.js';
-import {parseQuality} from './lib/quality';
+import {parseQuality} from '../../lib/quality';
 
-import { GeneralNode, NewFields, FinalFields } from './models/additions'
-import  { OfferInterface } from './models/parser/offer';
+import { GeneralNode, NewFields, FinalFields } from '../../models/additions'
+import  { OfferInterface } from '../../models/parser/offer';
 
 const EPOCH_OFFSET = 946684800;
 

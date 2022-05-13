@@ -1,4 +1,4 @@
-import { TransactionStream } from './../../../models/methods/subscribe';
+import { TransactionStream } from './../../models/methods/subscribe';
 
   function AccountSet(tx:TransactionStream) {
     var set = {};

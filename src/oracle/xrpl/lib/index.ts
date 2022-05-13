@@ -10,7 +10,7 @@ import {
 
 const getAffectedAccounts = utils.getAffectedAccounts
 
-export default {
+export {
     parseBalanceChanges,
     parseFinalBalances,
     parseOrderbookChanges,

@@ -1,4 +1,4 @@
-import { TransactionStream } from './../../../models/methods/subscribe';
+import { TransactionStream } from './../../models/methods/subscribe';
 
   function getSignerListNode(tx:TransactionStream) {
   

@@ -1,7 +1,7 @@
 import { dropsToXrp } from 'xrpl';
 import { TransactionStream } from './../../models/methods/subscribe';
 import {BigNumber} from 'bignumber.js';
-import { PayChanInterface , NodeInterface} from './models/parser/paychan';
+import { PayChanInterface , NodeInterface} from '../../models/parser/paychan';
 
 function getPaychannelNode(tx:TransactionStream) {
   var node:any
