@@ -26,7 +26,7 @@ const request:any = {
 const method:Method = {
   client: api, // Optional. See config file for default client and server
   filter: "offers_fill_all", // Optional. Default null
-  log: true // Optional. Default false
+  log: false // Optional. Default false
 }
 
 let count:number = 0 //Include count if you would like to track the number of responses
@@ -43,6 +43,7 @@ async function main(request, method) {
                 const [ parsedTx ] = await once(api, 'TransactionParsed');
                 console.log(`Parse Count: ${count}`)
                 console.log(parsedTx)
+                //console.log(api)
                 if ( parsedTx instanceof Error ) throw new Error(parsedTx.message)
             } catch (error) {
                 console.log(error)

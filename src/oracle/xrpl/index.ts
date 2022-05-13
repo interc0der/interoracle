@@ -13,9 +13,11 @@ const index = async (request:any, method?: Method | undefined) => {
     }
 
     if ( method.client.isConnected() ) {
+
         let api = method.client;
         client._setMethod(method);
         await client._request(api, request) 
+        api.removeAllListeners('transaction')
         let response = await client._addlistener(api, "transaction", client._parsetx) 
         return response
         

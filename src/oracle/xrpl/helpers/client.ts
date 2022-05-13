@@ -49,6 +49,8 @@ var count = 0;
     const _addlistener = (api:Client, listener:string | symbol, fn:Function) => {
         return new Promise((resolve, reject) => {
             api.addListener(listener, (response) => {
+                //console.log('resolving listener')
+                //console.log(api)
                 return resolve(fn(response))
             })
         })
