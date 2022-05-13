@@ -7,6 +7,19 @@ x-common-variables: &common-variables
   DB_PORT: ${DB_PORT}
 
 services:
+  mongo:
+    image: "mongo"
+    container_name: ${PROJECT_NAME}_database
+    restart: always
+    volumes:
+      - ./db/database:/data/db
+      - ./db/mongo-init.js:/docker-entrypoint-initdb.d/mongo-init.js:ro
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+    environment:
+      <<: *common-variables
+      MONGO_INITDB_ROOT_USERNAME: ${DB_ROOT_KEY}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_ROOT_SECRET}
   api:
       container_name: ${PROJECT_NAME}_api
       build:

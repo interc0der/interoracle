@@ -3,16 +3,6 @@
     "display": "Base Template",
     "exclude": ["node_modules"],
     "include": ["src/**/*", "types/**/*"],
-    "files": ["src/interface/graphql/graphql.d.ts"],
-    "buildOptions": {},
-    "watchOptions": {
-      "watchFile": "useFsEvents",
-      "watchDirectory": "useFsEvents",
-      "fallbackPolling": "dynamicpriority",
-      "synchronousWatchDirectory": false,
-      "excludeDirectories": ["**/node_modules", "dist", "temp/*"],
-      "excludeFiles": ["temp/file.ts"]
-    },
   
     "compilerOptions": {
   
