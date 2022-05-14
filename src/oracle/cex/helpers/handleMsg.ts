@@ -2,7 +2,7 @@ import utils from './utils';
 import { PriceArrayType } from 'types/request';
 import pako from 'pako';
 
-const binance = (evt:any, channels:string[], type:string, sequence:number) => {
+const binance = (evt:any, channels:string[], pairs:any, type:string, sequence:number,id:string) => {
     try {
         const resp = JSON.parse(evt.data);
         if (resp == undefined) return;
@@ -10,10 +10,10 @@ const binance = (evt:any, channels:string[], type:string, sequence:number) => {
 
         let resp_channels = channels.map((pair:string) => pair.toUpperCase())
 
-        let array = resp_channels.map((ticker:any) => {
+        let array = resp_channels.map((ticker:any, index:number) => {
             if(resp.data.s.indexOf(ticker) > -1 ) {
-              let asset = ticker.slice(0,-4)
-              var base = ticker.replace(asset,'');
+              let channel = pairs[index+1]
+              let symbol = channel.join('_')
 
               if(resp.data.m == true) {
                 var taker = "BUY"
@@ -23,11 +23,11 @@ const binance = (evt:any, channels:string[], type:string, sequence:number) => {
 
             return({
                 "type": type,
-                "symbol_id": `BINANCE_SPOT_${asset}_${base}`,
+                "symbol_id": symbol,
                 "sequence": ++sequence,
                 "time_exchange": resp.data.T,
                 "time_wakedapi": Date.now(),
-                "uuid": "770C7A3B-7258-4441-8182-83740F3E2457",
+                "uuid": id,
                 "price": parseFloat(resp.data.p),
                 "size": parseFloat(resp.data.q),
                 "taker_side": taker
@@ -44,7 +44,7 @@ const binance = (evt:any, channels:string[], type:string, sequence:number) => {
       }
   };
 
- const binanceUS = (evt:any, channels:string[], type:string, sequence:number) => {
+ const binanceUS = (evt:any, channels:string[], pairs:any, type:string, sequence:number,id:string) => {
     try{
         const resp = JSON.parse(evt.data);
   
@@ -53,10 +53,10 @@ const binance = (evt:any, channels:string[], type:string, sequence:number) => {
 
         let resp_channels = channels.map((pair:string) => pair.toUpperCase())
 
-        let array = resp_channels.map((ticker:any) => {
-            if(resp.data.s.indexOf(ticker) > -1 ) {
-              let asset = ticker.slice(0,-4)
-              var base = ticker.replace(asset,'');
+        let array = resp_channels.map((ticker:any, index:number) => {
+              if(resp.data.s.indexOf(ticker) > -1 ) {
+                let channel = pairs[index+1]
+                let symbol = channel.join('_')
 
               if(resp.data.m == true) {
                 var taker = "BUY"
@@ -66,11 +66,11 @@ const binance = (evt:any, channels:string[], type:string, sequence:number) => {
 
             return({
                 "type": type,
-                "symbol_id": `BINANCEUS_SPOT_${asset}_${base}`,
+                "symbol_id": symbol,
                 "sequence": ++sequence,
                 "time_exchange": resp.data.T,
                 "time_wakedapi": Date.now(),
-                "uuid": "770C7A3B-7258-4441-8182-83740F3E2457",
+                "uuid": id,
                 "price": parseFloat(resp.data.p),
                 "size": parseFloat(resp.data.q),
                 "taker_side": taker
@@ -88,41 +88,73 @@ const binance = (evt:any, channels:string[], type:string, sequence:number) => {
     }
 };
 
-const bitso = (evt:any, channels:string[], type:string, sequence:number) => {
+interface IBitsoTradeRepsonse {
+  type: string, // type
+  book?: string, // book
+  payload?: [
+    {
+      i: number, // A unique number identifying the transaction
+      a: string, // Amount
+      r: string, // Rate
+      v: string, // Value
+      mo: string, // Maker Order ID
+      to: string, // Taker Order ID
+      t: number // Maker side, 0 indicates buy 1, indicates sell
+    }
+  ]
+}
+
+interface IBitsoServerRepsonse {
+  type: string // 'trades'
+  action?: string, // 'subscribe'
+  response?: string, // 'subscribe'
+  time?: number, // 1652556518701
+}
+
+interface IBitsoKeepAlive {
+   type: string // 'ka' 
+}
+
+type IBitsoRepsonse = IBitsoTradeRepsonse | IBitsoServerRepsonse | IBitsoKeepAlive
+
+
+const bitso = (evt:any, channels:string[], pairs:any, type:string, sequence:number,id:string) => {
     try {
-        const resp = JSON.parse(evt.data);
+        const resp:IBitsoRepsonse = JSON.parse(evt.data);
         if (resp == undefined) return;
-        if (resp.action == "subscribe") return;
+        if ("action" in resp && resp.action == "subscribe") return;
         if (resp.type == "ka") return;
 
-        let array = channels.map((ticker:any) => {
-          if(resp.book.indexOf(ticker) > -1 ) {
-          let initTicker = ticker
-          let asset='';
+        let array = channels.map((ticker:any, index:number) => {
+          if( "book" in resp 
+              && resp.book 
+              && resp.book.indexOf(ticker) > -1 ) {
+                let channel = pairs[index+1]
+                let symbol = channel.join('_')
 
-          if (  initTicker.includes('usdt')
-                || initTicker.includes('usdc')
-                || initTicker.includes('busd')) asset = initTicker.slice(0,-5).toUpperCase();
+          var taker = "SELL"
+          var price, size
+          if( "payload" in resp 
+              && resp.payload
+              && resp.payload[0].t == 0) taker = "BUY"
 
-          if (  !initTicker.includes('usdt')
-                && !initTicker.includes('usdc')
-                && !initTicker.includes('busd')) asset = initTicker.slice(0,-4).toUpperCase();
-
-          var base = ticker.replace(asset.toLowerCase()+"_",'').toUpperCase();
-
-          if(resp.payload[0].t == 0) {var taker = "BUY"} else {var taker = "SELL"}
+          if( "payload" in resp 
+              && resp.payload ) { 
+                price = parseFloat(resp.payload[0].r)
+                size = parseFloat(resp.payload[0].a)
+              }
 
            return ({
-               "type": type,
-               "symbol_id": `BITSO_SPOT_${asset}_${base}`,
-               "sequence": ++sequence,
-               "time_exchange": undefined,
-               "time_wakedapi": Date.now(),
-               "uuid": "770C7A3B-7258-4441-8182-83740F3E2457",
-               "price": parseFloat(resp.payload[0].r),
-               "size": parseFloat(resp.payload[0].a),
-               "taker_side": taker
-             })
+              "type": type,
+              "symbol_id": symbol,
+              "sequence": ++sequence,
+              "time_exchange": undefined,
+              "time_wakedapi": Date.now(),
+              "uuid": id,
+              "price": price,
+              "size": size,
+              "taker_side": taker
+            })
           }
           return
         })
@@ -134,7 +166,7 @@ const bitso = (evt:any, channels:string[], type:string, sequence:number) => {
     }
 }
 
-const bitstamp = (evt:any, channels:string[], type:string, sequence:number) => {
+const bitstamp = (evt:any, channels:string[], pairs:any, type:string, sequence:number,id:string) => {
    
     try {
         const resp = JSON.parse(evt.data);
@@ -142,29 +174,18 @@ const bitstamp = (evt:any, channels:string[], type:string, sequence:number) => {
         if (resp == undefined) return;
         if (resp.data.price == undefined) return;
 
-        let array = channels.map((ticker:string) => {
-          
+        let array = channels.map((ticker:any, index:number) => {
           if( resp.channel == ticker) {
-            let initTicker = ticker.split('_')[2]
-            let asset='';
-
-            if (  initTicker.includes('usdt')
-                  || initTicker.includes('usdc')
-                  || initTicker.includes('busd')) asset = initTicker.slice(0,-4).toUpperCase();
-
-            if (  !initTicker.includes('usdt')
-                  && !initTicker.includes('usdc')
-                  && !initTicker.includes('busd')) asset = initTicker.slice(0,-3).toUpperCase();
-
-            var base = initTicker.replace(asset.toLowerCase(),'').toUpperCase();
+            let channel = pairs[index+1]
+            let symbol = channel.join('_')
 
             return ({
                     "type": type,
-                    "symbol_id": `BITSTAMP_SPOT_${asset}_${base}`,
+                    "symbol_id": symbol,
                     "sequence": ++sequence,
                     "time_exchange": parseFloat(resp.data.microtimestamp),
                     "time_wakedapi": Date.now(),
-                    "uuid": "770C7A3B-7258-4441-8182-83740F3E2457",
+                    "uuid": id,
                     "price": resp.data.price,
                     "size": resp.data.amount,
                     "taker_side": "BUY"
@@ -183,41 +204,28 @@ const bitstamp = (evt:any, channels:string[], type:string, sequence:number) => {
     }
 }
 
-const kraken = (evt:any, channels:string[], type:string, sequence:number) => {
+const kraken = (evt:any, channels:string[], pairs:any, type:string, sequence:number,id:string) => {
     try {
         const resp = JSON.parse(evt.data);
   
         if( resp.event == "heartbeat") return;
         if( resp.event == "systemStatus") return;
         if( resp.event == "subscriptionStatus") return;
-    
-        let array = channels.map (( ticker:any) => {
-            if(resp[3].indexOf(ticker) > -1 ) {
-                let asset
 
-                if (ticker.includes('USDT')
-                || ticker.includes('USDC')
-                || ticker.includes('BUSD')
-                ) {
-                  asset = ticker.slice(0,-5)
-                } else {
-                  asset = ticker.slice(0,-4)
-                }
-
-                if( ticker.indexOf("XBT") > -1 ) asset = "BTC"
-                if( ticker.indexOf("XDG") > -1 ) asset = "DOGE"
-
-                let base;
-                base = ticker.replace(asset+"/",'');
-                if( ticker.indexOf("XBT") > -1 )  base = ticker.replace("XBT/",'')
-                if( ticker.indexOf("XDG") > -1 ) base = ticker.replace("XDG/",'')
+        let array = channels.map((ticker:any, index:number) => {
+          if( resp[3].indexOf(ticker) > -1 ) {
+            let channel = pairs[index+1]
+            let symbol = channel.join('_')
 
                 let taker;
                 if (resp[1][0][3] == "b") taker = "BUY" 
                 if (resp[1][0][3] != "b") taker = "SELL"
 
                 let weightedInput = resp[1].map((resp:any) => {
-                    return ({price: parseFloat(resp[0]), amount: parseFloat(resp[1])})
+                    return ({
+                      price: parseFloat(resp[0]), 
+                      amount: parseFloat(resp[1])
+                    })
                 }) 
 
                 let sum = 0;
@@ -229,11 +237,11 @@ const kraken = (evt:any, channels:string[], type:string, sequence:number) => {
                 
                 return ({
                     "type": type,
-                    "symbol_id": `KRAKEN_SPOT_${asset}_${base}`,
+                    "symbol_id": symbol,
                     "sequence": ++sequence,
                     "time_exchange": resp[1][0][2],
                     "time_interoracle": Date.now(),
-                    "uuid": "770C7A3B-7258-4441-8182-83740F3E2457",
+                    "uuid": id,
                     "price": price,
                     "size": sum,
                     "taker_side": taker
@@ -251,7 +259,7 @@ const kraken = (evt:any, channels:string[], type:string, sequence:number) => {
     }
 }
 
-const coinbase = (evt:any, channels:string[], type:string, sequence:number) => {
+const coinbase = (evt:any, channels:string[], pairs:any, type:string, sequence:number,id:string) => {
     try {
         const resp = JSON.parse(evt.data);
         
@@ -277,9 +285,9 @@ const coinbase = (evt:any, channels:string[], type:string, sequence:number) => {
                 "type": type,
                 "symbol_id": `COINBASE_SPOT_${asset}_${base}`,
                 "sequence": ++sequence,
-                "time_exchange": resp.time,
+                "time_exchange": new Date(resp.time).getTime(),
                 "time_interoracle": Date.now(),
-                "uuid": "770C7A3B-7258-4441-8182-83740F3E2457",
+                "uuid": id,
                 "price": parseFloat(resp.price),
                 "size": parseFloat(resp.last_size),
                 "taker_side": resp.side.toUpperCase()
@@ -296,7 +304,7 @@ const coinbase = (evt:any, channels:string[], type:string, sequence:number) => {
     }
 }
 
-const kucoin = (evt:any, channels:string[], type:string, sequence:number) => {
+const kucoin = (evt:any, channels:string[], pairs:any, type:string, sequence:number,id:string) => {
 
     try {
         const resp = JSON.parse(evt.data);
@@ -327,7 +335,7 @@ const kucoin = (evt:any, channels:string[], type:string, sequence:number) => {
                     "sequence": ++sequence,
                     "time_exchange": resp.data.time,
                     "time_interoracle": Date.now(),
-                    "uuid": "770C7A3B-7258-4441-8182-83740F3E2457",
+                    "uuid": id,
                     "price": parseFloat(resp.data.price),
                     "size": parseFloat(resp.data.size),
                     //"taker_side": taker
@@ -344,7 +352,7 @@ const kucoin = (evt:any, channels:string[], type:string, sequence:number) => {
     }
 }
 
-const ftx = (evt:any, channels:string[], type:string, sequence:number) => {
+const ftx = (evt:any, channels:string[], pairs:any, type:string, sequence:number,id:string) => {
     try {
         const resp = JSON.parse(evt.data);
         if( resp.type == "subscribed") return;
@@ -382,9 +390,9 @@ const ftx = (evt:any, channels:string[], type:string, sequence:number) => {
                 "type": type,
                 "symbol_id": `FTX_SPOT_${asset}_${base}`,
                 "sequence": ++sequence,
-                "time_exchange": resp.data[0].time,
+                "time_exchange": new Date(resp.data[0].time).getTime(),
                 "time_wakedapi": Date.now(),
-                "uuid": "770C7A3B-7258-4441-8182-83740F3E2457",
+                "uuid": id,
                 "price": price,
                 "size": sum,
                 "taker_side": resp.data[0].side.toUpperCase()
@@ -399,7 +407,7 @@ const ftx = (evt:any, channels:string[], type:string, sequence:number) => {
     }
 }
 
- const huobi = (ws: any, evt:any, channels:string[], type:string, sequence:number) => {
+ const huobi = (ws: any, evt:any, channels:string[], pairs:any, type:string, sequence:number,id:string) => {
 
     let text = pako.inflate(evt.data, {
         to: 'string'
@@ -424,7 +432,7 @@ const ftx = (evt:any, channels:string[], type:string, sequence:number) => {
           "sequence": ++sequence,
           "time_exchange": resp.ts,
           "time_wakedapi": Date.now(),
-          "uuid": "770C7A3B-7258-4441-8182-83740F3E2457",
+          "uuid": id,
           "price": parseFloat(resp.price),
           "size": parseFloat(resp.amount),
           "taker_side": resp.direction.toUpperCase()
@@ -437,7 +445,7 @@ const ftx = (evt:any, channels:string[], type:string, sequence:number) => {
   }
 }
 
-const cryptoX = (ws:any, evt:any, channels:string[], type:string, sequence:number) => {
+const cryptoX = (ws:any, evt:any, channels:string[], pairs:any, type:string, sequence:number,id:string) => {
     try {
         const resp = JSON.parse(evt.data);
     
@@ -461,7 +469,7 @@ const cryptoX = (ws:any, evt:any, channels:string[], type:string, sequence:numbe
                     "sequence": ++sequence,
                     "time_exchange": data.t,
                     "time_wakedapi": Date.now(),
-                    "uuid": "770C7A3B-7258-4441-8182-83740F3E2457",
+                    "uuid": id,
                     "price": data.p,
                     "size": data.q,
                     "taker_side": data.s
@@ -475,7 +483,7 @@ const cryptoX = (ws:any, evt:any, channels:string[], type:string, sequence:numbe
         }
 }
 
-const gate = (evt:any, channels:string[], type:string, sequence:number) => {
+const gate = (evt:any, channels:string[], pairs:any, type:string, sequence:number,id:string) => {
     const resp = JSON.parse(evt.data);
 
     try{
@@ -489,7 +497,7 @@ const gate = (evt:any, channels:string[], type:string, sequence:number) => {
                 "sequence": ++sequence,
                 "time_exchange": data.time,
                 "time_wakedapi": Date.now(),
-                "uuid": "770C7A3B-7258-4441-8182-83740F3E2457",
+                "uuid": id,
                 "price": parseFloat(data.price),
                 "size": parseFloat(data.amount),
                 "taker_side": data.type.toUpperCase()
@@ -502,7 +510,7 @@ const gate = (evt:any, channels:string[], type:string, sequence:number) => {
       }
 }
 
-const okex = (evt:any, channels:string[], type:string, sequence:number) => {
+const okex = (evt:any, channels:string[], pairs:any, type:string, sequence:number,id:string) => {
 
     let msg = JSON.parse(evt.data)
 
@@ -533,9 +541,9 @@ const okex = (evt:any, channels:string[], type:string, sequence:number) => {
             "type": type,
             "symbol_id": `OKEX_SPOT_${asset}_${base}`,
             "sequence": ++sequence,
-            "time_exchange": data.ts,
+            "time_exchange": parseFloat(data.ts),
             "time_wakedapi": Date.now(),
-            "uuid": "770C7A3B-7258-4441-8182-83740F3E2457",
+            "uuid": id,
             "price": parseFloat(data.px),
             "size": parseFloat(quantity),
             "taker_side": "BUY"
@@ -548,7 +556,7 @@ const okex = (evt:any, channels:string[], type:string, sequence:number) => {
   }
 }
 
-const bitfinex = (evt:any, channels:string[], type:string, sequence:number) => {
+const bitfinex = (evt:any, channels:string[], pairs:any, type:string, sequence:number,id:string) => {
 
     let msg = JSON.parse(evt.data)
 
@@ -582,7 +590,7 @@ const bitfinex = (evt:any, channels:string[], type:string, sequence:number) => {
             "sequence": ++sequence,
             "time_exchange": msg[msg.length-3],
             "time_wakedapi": Date.now(),
-            "uuid": "770C7A3B-7258-4441-8182-83740F3E2457",
+            "uuid": id,
             "price": parseFloat(msg[msg.length-2]),
             "size": Math.abs(msg[msg.length-1]),
             "taker_side": taker
@@ -595,7 +603,7 @@ const bitfinex = (evt:any, channels:string[], type:string, sequence:number) => {
 }
 }
 
-const poloniex = (tickers: string[][], evt:any, channels:string[], type:string, sequence:number) => {
+const poloniex = (tickers: string[][], evt:any, channels:string[], pairs:any, type:string, sequence:number,id:string) => {
 
     let msg = JSON.parse(evt.data);
 
@@ -614,7 +622,7 @@ const poloniex = (tickers: string[][], evt:any, channels:string[], type:string, 
                 "sequence": ++sequence,
                 "time_exchange": undefined,
                 "time_wakedapi": Date.now(),
-                "uuid": "770C7A3B-7258-4441-8182-83740F3E2457",
+                "uuid": id,
                 "price": parseFloat(msg[2][1]),
                 "size": undefined,
                 "taker_side": "BUY"
@@ -631,22 +639,33 @@ const poloniex = (tickers: string[][], evt:any, channels:string[], type:string, 
  
 
 
-const handleIncomingMsg = (ws:WebSocket,exchange:string,evt:any, channels:string[],tickers:string[][], type:string, sequence:number) => {
+const handleIncomingMsg = (
+              ws:WebSocket,
+              exchange:string,
+              evt:any, 
+              channels:string[],
+              tickers:string[][], 
+              type:string, 
+              sequence:number, 
+              id:string,
+              pairs:string[]
+        ) => {
+
   let response
-  if (exchange == 'BINANCE') response = binance(evt, channels, type, sequence)
-  if (exchange == 'BINANCEUS') response = binanceUS(evt, channels, type, sequence)
-  if (exchange == 'COINBASE') response = coinbase(evt, channels, type, sequence)
-  if (exchange == 'KUCOIN') response = kucoin(evt, channels, type, sequence)
-  if (exchange == 'KRAKEN') response = kraken(evt, channels, type, sequence)
-  if (exchange == 'BITSTAMP') response = bitstamp(evt, channels, type, sequence)
-  if (exchange == 'BITSO') response = bitso(evt, channels, type, sequence)
-  if (exchange == 'FTX') response = ftx(evt, channels, type, sequence)
-  if (exchange == 'HUOBIPRO') response = huobi(ws, evt, channels, type, sequence)
-  if (exchange == 'CRYPTO') response = cryptoX(ws, evt, channels, type, sequence)
-  if (exchange == 'GATEIO') response = gate(evt, channels, type, sequence)
-  if (exchange == 'OKEX') response = okex(evt, channels, type, sequence)
-  if (exchange == 'BITFINEX') response = bitfinex(evt, channels, type, sequence)
-  if (exchange == 'POLONIEX') response = poloniex(tickers, evt, channels, type, sequence) 
+  if (exchange == 'BINANCE') response = binance(evt, channels, pairs, type, sequence,id)
+  if (exchange == 'BINANCEUS') response = binanceUS(evt, channels, pairs, type, sequence,id)
+  if (exchange == 'COINBASE') response = coinbase(evt, channels, pairs, type, sequence,id)
+  if (exchange == 'KUCOIN') response = kucoin(evt, channels, pairs, type, sequence,id)
+  if (exchange == 'KRAKEN') response = kraken(evt, channels, pairs, type, sequence,id)
+  if (exchange == 'BITSTAMP') response = bitstamp(evt, channels, pairs, type, sequence,id)
+  if (exchange == 'BITSO') response = bitso(evt, channels, pairs, type, sequence,id)
+  if (exchange == 'FTX') response = ftx(evt, channels, pairs, type, sequence,id)
+  if (exchange == 'HUOBIPRO') response = huobi(ws, evt, channels, pairs, type, sequence,id)
+  if (exchange == 'CRYPTO') response = cryptoX(ws, evt, channels, pairs, type, sequence,id)
+  if (exchange == 'GATEIO') response = gate(evt, channels, pairs, type, sequence,id)
+  if (exchange == 'OKEX') response = okex(evt, channels, pairs, type, sequence,id)
+  if (exchange == 'BITFINEX') response = bitfinex(evt, channels, pairs, type, sequence,id)
+  if (exchange == 'POLONIEX') response = poloniex(tickers, evt, channels, pairs, type, sequence,id) 
   return response
 }
 export default handleIncomingMsg;

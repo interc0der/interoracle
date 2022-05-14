@@ -1,7 +1,3 @@
-import dotenv from 'dotenv';
-dotenv.config();
-
-
 const binance = (ws:any,channels:string[]) => {
   return
   };
@@ -121,7 +117,7 @@ const gate = (ws:any,channels:string[]) => {
 const okex = (ws:any,channels:string[]) => {
   console.log('okex opened')
 
-  let args = []
+  let args:any = []
   for (let symbol of channels) {
     args.push({
       "channel": "trades",

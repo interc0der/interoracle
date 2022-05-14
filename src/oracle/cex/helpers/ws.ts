@@ -4,8 +4,8 @@ import handleIncomingMsg from './handleMsg';
 import WebSocket from 'ws';
 
 class Interoracle {
-    [index: string]:any
-    XRP: any
+    [index:string]:any
+    XRP:any
     LTC:any
     ADA:any
     ALGO:any
@@ -17,17 +17,19 @@ class Interoracle {
     DGB:any
     FIL:any
 
-    pairs: string[]
-    str_pairs: string[]
-    type: string
-    sequence: number
-    channels: string[]
-    ws: any
-    exchange: string
-    indices: number[]
-    tickers: string[][]
+    pairs:string[]
+    str_pairs:string[]
+    type:string
+    sequence:number
+    channels:string[]
+    ws:any
+    exchange:string
+    indices:number[]
+    tickers:string[][]
 
-    constructor(exchange:string, global:string[], pairs:string[]) {
+    peer:any
+
+    constructor(peer, exchange:string, global:string[], pairs:string[]) {
         this.pairs = pairs
         this.str_pairs=[]
         this.type = pairs[0]
@@ -37,6 +39,7 @@ class Interoracle {
         this.sequence = 0
         this.indices = []
         this.tickers=[]
+        this.peer = peer
 
         this._processURL(exchange,global,pairs)
     }
@@ -67,6 +70,7 @@ class Interoracle {
 
     //An event listener to be called when a message is received from the server
     private async _onMessage(event: any): Promise<void> {
+        //console.log(JSON.parse(event.data))
         let response = await handleIncomingMsg(
                                         this.ws,
                                         this.exchange, 
@@ -74,11 +78,16 @@ class Interoracle {
                                         this.channels, 
                                         this.tickers,
                                         this.type, 
-                                        this.sequence
+                                        this.sequence,
+                                        this.peer.id,
+                                        this.pairs
                                         )
         this.sequence++
 
         if (response != undefined && response.price != undefined) {
+            let message = JSON.stringify(response);
+            this.peer.socket.send(message, error => '');
+
             let index = this.str_pairs.indexOf(response.symbol_id)
             let global_index = this.indices[index]
             let asset = response.symbol_id.split('_')[2]

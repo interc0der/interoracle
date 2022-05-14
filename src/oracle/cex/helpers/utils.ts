@@ -1,4 +1,4 @@
-import { PriceArrayType, GrossPriceArrayType } from "src/interface/request";
+import { PriceArrayType, GrossPriceArrayType } from "types/request";
 
 /**
  * 
@@ -8,8 +8,8 @@ import { PriceArrayType, GrossPriceArrayType } from "src/interface/request";
  * @returns {number} // Weighted average price based on trade amount, user assigned weights, and (optional) time decay
  */
 const gross_weighted_average_price = (input:GrossPriceArrayType[]) => {
-    var weights = [];
-    var values = [];
+    var weights:any = [];
+    var values:any = [];
     var weighted_total = 0;
     var total_value = 0;
     var decay = 10000000; 
@@ -50,8 +50,8 @@ const gross_weighted_average_price = (input:GrossPriceArrayType[]) => {
  * @returns {number} //Weighted average price based on trade amount
  */
 const weighted_average = (input:PriceArrayType[]) => {
-    var weights = [];
-    var values = [];
+    var weights:any = [];
+    var values:any = [];
     var weighted_total = 0;
     var total_value = 0;
   

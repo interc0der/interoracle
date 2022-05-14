@@ -9,13 +9,13 @@ import axios from 'axios'
 /**
  * Initializes a empty matrix to park latest price
  * 
- * @returns { Array } RxC matrix 
+ * @returns { Array } RxC matrix  
  */
 const createEmptyArray = (r:number, c:number, fill:any) => {
-    let initArray = []
+    let initArray:any= []
 
     for (let i=0; i<c; i++) {
-        let row =[]
+        let row:any = []
         for (let j=0; j<r; j++) {
             row.push(fill)
         }
@@ -69,11 +69,11 @@ const organizeByExchange = (input:Request) => {
     }
 }
 
-const initializeWS = (channels:any, handledArray:any) => {
+const initializeWS = (peer:any, channels:any, handledArray:any) => {
     //Subscribe to websockets TRADES
     try{
         for (let i =0; i<constants.trackedExchanges.length; i++) {
-            if (handledArray[i].length>1 ) new Interoracle(constants.trackedExchanges[i], channels, handledArray[i])
+            if (handledArray[i].length>1 ) new Interoracle(peer, constants.trackedExchanges[i], channels, handledArray[i])
         }
 
         for (let i =0; i<constants.trackedCurrencies.length; i++) {
