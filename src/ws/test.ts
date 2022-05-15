@@ -9,6 +9,10 @@ const subscribe_channels = [
     //"KUCOIN_SPOT_DOGE_USDT",
     "BITSO_SPOT_BTC_USD" ,
     //"KUCOIN_SPOT_BTC_USDT",
+    "BITFINEX_SPOT_XRP_USD" ,
+    "BITFINEX_SPOT_XRP_USDT" ,
+    "BITFINEX_SPOT_BTC_USD" ,
+    "BITFINEX_SPOT_BTC_USDT" 
   ] 
 
 /* 

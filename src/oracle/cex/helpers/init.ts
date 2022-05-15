@@ -1,6 +1,5 @@
 import axios from 'axios';
 
-
 const binance = (input:string[]) => {
     let channels:string[] = [];
 
