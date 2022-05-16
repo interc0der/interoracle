@@ -72,13 +72,19 @@ const organizeByExchange = (input:Request) => {
 const initializeWS = (peer:any, channels:any, handledArray:any) => {
     //Subscribe to websockets TRADES
     try{
+        let sockets:any= []
         for (let i =0; i<constants.trackedExchanges.length; i++) {
-            if (handledArray[i].length>1 ) new Interoracle(peer, constants.trackedExchanges[i], channels, handledArray[i])
+            if (handledArray[i].length>1 ) {
+                let ws = new Interoracle(peer, constants.trackedExchanges[i], channels, handledArray[i])
+                sockets.push(ws)
+            }
         }
 
         for (let i =0; i<constants.trackedCurrencies.length; i++) {
             Interoracle.prototype[constants.trackedCurrencies[i]] = createEmptyArray(30, 3, undefined)
         }
+
+        return sockets
 
     }catch(error) {
         console.log(error)

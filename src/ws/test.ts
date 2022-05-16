@@ -338,7 +338,7 @@ const main = async () => {
         if (response.type == 'success') return
         if (response.type == 'ping') return ws.send(JSON.stringify({ type: 'pong' }))
 
-        let exchange = response.symbol_id.split('_')[0]
+/*         let exchange = response.symbol_id.split('_')[0]
         let asset = response.symbol_id.split('_')[2]
         let base = response.symbol_id.split('_')[3]
 
@@ -359,7 +359,7 @@ const main = async () => {
           }
       })
       
-      await price.save() 
+      await price.save()  */
       return
     }
 

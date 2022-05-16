@@ -62,6 +62,17 @@ class Interoracle {
         this.ws.onclose= (evt:any) => this._onClose(evt);
     }
 
+    public disconnect = ():void => {
+        this.ws.close();
+        setTimeout(() => {this._forceClose()}, 10000);
+    }
+
+    private _forceClose = ():void => {
+        if ([this.ws.OPEN, this.ws.CLOSING].includes(this.ws.readyState)) {
+                this.ws.terminate();
+        }
+    }
+
     //indicates that the connection is ready to send and receive data
     private async _onOpen(event: any): Promise<void> {
         console.log(this.exchange, "connected");
@@ -109,11 +120,19 @@ class Interoracle {
     //An event listener to be called when an error occurs. This is a simple event named "error".
     private _onError(event: any): void {
         console.log(this.exchange, 'error');
+        this.peer.socket.send(JSON.stringify({
+            exchange:this.exchange, 
+            type: 'Websocket error',
+            msg: event}), error => '');
     }
 
     //An event listener to be called when the WebSocket connection's readyState changes to CLOSED.
     private _onClose(event: any): void {
-        console.log(JSON.stringify(event.data));
+        console.log(`Closing ${this.exchange} for ${this.peer.id}`);
+        this.peer.socket.send(JSON.stringify({
+            exchange:this.exchange, 
+            type: 'Websocket close',
+            msg: event}), error => '');
     }
 }
  

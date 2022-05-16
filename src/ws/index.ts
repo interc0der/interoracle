@@ -1,5 +1,6 @@
 import express from 'express';
 import http from 'http';
+import { send } from 'process';
 const app = express();
 
 import { init } from '../oracle/cex/index'
@@ -13,8 +14,10 @@ console.log('Server is running on port', port);
 
 class InteroracleWS {
     wss: any;
+    peerSockets: any;
     constructor() {
         const WebSocket = require('ws');
+        this.peerSockets = {};
         this.wss = new WebSocket.Server({ port : 4051});
         this.wss.on('connection', (socket) => this._onConnection(new Peer(socket)));
         console.log('The websocket is running and listening for requests');
@@ -23,6 +26,7 @@ class InteroracleWS {
     _onConnection = (peer) => {
         peer.socket.on('message', message => this._onMessage(peer, message));
         this._keepAlive(peer);
+        console.log(`New peer ( ${peer.id} )`)
 
         // send displayName
         this._send(peer, {
@@ -40,33 +44,17 @@ class InteroracleWS {
             return; // TODO: handle malformed JSON
         }
 
-
         let api;
         switch (message.type) {
-          case 'pong':
-              sender.lastBeat = Date.now();
-              break;
-          case 'init':
-                sender.lastBeat = Date.now();
-/*                 api = await init()
-                await api.connect();
-                let proposed = await listenToProposed(api,message.account)
-                this._send(sender,{type:'proposed'})
-                let result = await listenForPayment(api, message.account) */
-                this._send(sender,{type:'validated'})
-                await api.disconnect();
-              break;
-          case 'subscribe':
-                sender.lastBeat = Date.now();
-                init(sender, message, message.subscribe_filter_symbol_id)
-/*                api = await init()
-                await api.connect();
-                let mint = await ledger.nftMint([api,message.uri,message.flags])
-                this._send(sender,{type:'minted', hash: mint[0], tokenID: mint[1]})
-                let transfer = await ledger.nftTransfer([api,message.account,mint[1]])
-                this._send(sender,{type:'transfer', id: transfer}) */
-                //await api.disconnect();
-              break;    
+            case 'pong':
+                    sender.lastBeat = Date.now();
+                    break;
+            case 'subscribe': 
+                    sender.lastBeat = Date.now();
+                    if (this.peerSockets[sender.id]) this._removePeerSockets(sender)
+                    let sockets = init(sender, message, message.subscribe_filter_symbol_id)
+                    this.peerSockets[sender.id] = sockets
+                    break;    
       }
     }
 
@@ -77,6 +65,12 @@ class InteroracleWS {
         peer.socket.send(message, error => '');
     }
 
+    _removePeerSockets = (peer) => {
+        console.log(`Removing peer from socket( ${peer.id} )`)
+        this.peerSockets[peer.id].forEach((socket) => socket.disconnect())
+        delete this.peerSockets[peer.id]
+    }
+
     _keepAlive = (peer) => {
         this._cancelKeepAlive(peer);
         var timeout = 30000;
@@ -84,7 +78,8 @@ class InteroracleWS {
             peer.lastBeat = Date.now();
         }
         if (Date.now() - peer.lastBeat > 2 * timeout) {
-            peer.socket.terminate();
+            this._removePeerSockets(peer)
+            setTimeout(() => {peer.socket.terminate()}, 5000);
             return;
         }
 
