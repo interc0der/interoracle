@@ -2,6 +2,7 @@ import process from './process';
 import handleOpen from './handleOpen';
 import handleIncomingMsg from './handleMsg';
 import WebSocket from 'ws';
+import db from '../../../api/helpers/db'
 
 class Interoracle {
     [index:string]:any
@@ -91,6 +92,7 @@ class Interoracle {
             let index = this.str_pairs.indexOf(response.symbol_id)
             let global_index = this.indices[index]
             let asset = response.symbol_id.split('_')[2]
+            let base = response.symbol_id.split('_')[3]
 
             if (global_index != undefined){
                 this[asset][0][global_index]=response.price

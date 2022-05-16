@@ -1,9 +1,10 @@
 import { json } from 'express'
 import ws, { WebSocket } from 'ws'
+import db from '../api/helpers/db'
 
 let url = 'ws://localhost:4051'
 
-const subscribe_channels = [
+/* const subscribe_channels = [
     // XRP Enabled Exchanges
     "BITSO_SPOT_XRP_USD" ,
     //"KUCOIN_SPOT_DOGE_USDT",
@@ -13,9 +14,8 @@ const subscribe_channels = [
     "BITFINEX_SPOT_XRP_USDT" ,
     "BITFINEX_SPOT_BTC_USD" ,
     "BITFINEX_SPOT_BTC_USDT" 
-  ] 
+  ]  */
 
-/* 
   const subscribe_channels = [
     // XRP Enabled Exchanges
     "BINANCE_SPOT_XRP_USDT",
@@ -314,8 +314,7 @@ const subscribe_channels = [
     "OKEX_SPOT_FIL_USDC",
     "COINBASE_SPOT_FIL_USD" 
   ] 
-   */
-  
+
 
 const main = async () => {
     const ws = new WebSocket(url)
@@ -332,9 +331,36 @@ const main = async () => {
         }))
     }
 
-    ws.onmessage = (e:any) => {
-        let data = JSON.parse(e.data) 
-        console.log('message received', data)
+    ws.onmessage = async (e:any) => {
+        let response = JSON.parse(e.data) 
+        console.log('message received', response)
+
+        if (response.type == 'success') return
+        if (response.type == 'ping') return ws.send(JSON.stringify({ type: 'pong' }))
+
+        let exchange = response.symbol_id.split('_')[0]
+        let asset = response.symbol_id.split('_')[2]
+        let base = response.symbol_id.split('_')[3]
+
+        let price = new db.TimeSeries({
+          ticker: `${asset}_${base}`,
+          price: response.price,
+          timestamp: response.time_wakedapi || Date.now(),
+          metadata: {
+              exchange: exchange,
+              asset: {
+                  currency: asset,
+                  issuer:'',
+              },
+              base: {
+                  currency: base,
+                  issuer:'',
+              }
+          }
+      })
+      
+      await price.save() 
+      return
     }
 
     ws.onclose = () => console.log('WS: Disconnected');

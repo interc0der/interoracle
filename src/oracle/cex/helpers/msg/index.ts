@@ -33,7 +33,6 @@ const index:IExchangeDir =  {
 "BINANCE": binance, 
 "BINANCEUS": binanceus, 
 "BITFINEX": bitfinex, 
-"BITFINEX": bitfinex, 
 "BITSO": bitso, 
 "BITSTAMP": bitstamp, 
 "COINBASE": coinbase, 

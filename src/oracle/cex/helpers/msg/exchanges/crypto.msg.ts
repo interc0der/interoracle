@@ -1,7 +1,7 @@
 /**
  * 
  * CRYPTO: Handle websocket message 
- * https://www.bitstamp.net/websocket/v2/
+ * 
  * 
  * @param {any} evt - unaltered event for exchange websocket 
  * @param {any} evt - unaltered event for exchange websocket 

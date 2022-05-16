@@ -1,5 +1,5 @@
-const express = require('express');
-const http = require('http');
+import express from 'express';
+import http from 'http';
 const app = express();
 
 import { init } from '../oracle/cex/index'
@@ -10,7 +10,6 @@ const uuidv4 = new RegExp(/^[0-9A-F]{8}-[0-9A-F]{4}-4[0-9A-F]{3}-[89AB][0-9A-F]{
 const server = http.createServer(app);
 server.listen(port, '0.0.0.0');
 console.log('Server is running on port', port);
-
 
 class InteroracleWS {
     wss: any;

@@ -1,5 +1,4 @@
 import client from './helpers/client';
-
 import { Method } from 'types/oracle'
 
 const index = async (request:any, method?: Method | undefined) => {

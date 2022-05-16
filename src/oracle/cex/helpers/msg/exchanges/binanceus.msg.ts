@@ -13,7 +13,7 @@
  */
 
 
-export const binanceUS = (
+export const binanceus = (
     evt:any, 
     channels:string[], 
     pairs:any, 
