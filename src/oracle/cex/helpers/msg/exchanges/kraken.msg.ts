@@ -16,12 +16,13 @@ import { PriceArrayType } from 'types/request';
  */
 
 export const kraken = (
-    evt:any, 
-    channels:string[], 
-    pairs:any, 
-    type:string, 
-    sequence:number,
-    id:string) => {
+  ws:WebSocket, 
+  evt:any, 
+  channels:string[], 
+  pairs:any, 
+  type:string, 
+  sequence:number,
+  id:string) => {
 
     try {
         const resp = JSON.parse(evt.data);

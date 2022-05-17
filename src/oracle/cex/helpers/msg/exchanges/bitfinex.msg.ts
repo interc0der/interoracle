@@ -14,6 +14,7 @@
  */
 
 export const bitfinex = (
+    ws:WebSocket, 
     evt:any, 
     channels:string[], 
     pairs:any, 
@@ -53,7 +54,7 @@ export const bitfinex = (
                     "symbol_id": `BITFINEX_SPOT_${asset}_${base}`,
                     "sequence": ++sequence,
                     "time_exchange": msg[msg.length-3],
-                    "time_wakedapi": Date.now(),
+                    "time_interoracle": Date.now(),
                     "uuid": id,
                     "price": parseFloat(msg[msg.length-2]),
                     "size": Math.abs(msg[msg.length-1]),

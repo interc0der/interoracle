@@ -1,8 +1,6 @@
-import process from './helpers/process';
-import { Interoracle }  from './helpers/ws';
+import Interoracle, { initialize }  from './interoracle';
 
-export const init = (peer, request, channels) => {
-  let array:any = process.organizeByExchange(request)
-  let sockets = process.initializeWS(peer, channels, array)
+export const init = (peer, request) => {
+  let sockets = initialize(peer, request)
   return sockets
 }

@@ -14,12 +14,13 @@
 
 
 export const binanceus = (
-    evt:any, 
-    channels:string[], 
-    pairs:any, 
-    type:string, 
-    sequence:number,
-    id:string) => {
+  ws:WebSocket, 
+  evt:any, 
+  channels:string[], 
+  pairs:any, 
+  type:string, 
+  sequence:number,
+  id:string) => {
 
     try{
         // Parse message from exchange
@@ -48,7 +49,7 @@ export const binanceus = (
                     "symbol_id": symbol,
                     "sequence": ++sequence,
                     "time_exchange": resp.data.T,
-                    "time_wakedapi": Date.now(),
+                    "time_interoracle": Date.now(),
                     "uuid": id,
                     "price": parseFloat(resp.data.p),
                     "size": parseFloat(resp.data.q),

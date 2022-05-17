@@ -39,12 +39,13 @@ const availableChannels = [
  */
 
 export const bitstamp = (
+    ws:WebSocket, 
     evt:any, 
     channels:string[], 
     pairs:any, 
     type:string, 
     sequence:number,
-    id:string ) => {
+    id:string) => {
    
     try {
 
@@ -66,7 +67,7 @@ export const bitstamp = (
                         "symbol_id": symbol,
                         "sequence": ++sequence,
                         "time_exchange": parseFloat(resp.data.microtimestamp),
-                        "time_wakedapi": Date.now(),
+                        "time_interoracle": Date.now(),
                         "uuid": id,
                         "price": resp.data.price,
                         "size": resp.data.amount,

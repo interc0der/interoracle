@@ -17,14 +17,14 @@ import pako from 'pako';
  */
 
 
-export const huobi = (
-    ws: any, 
-    evt:any, 
-    channels:string[], 
-    pairs:any, 
-    type:string, 
-    sequence:number,
-    id:string) => {
+export const huobipro = (
+  ws:WebSocket, 
+  evt:any, 
+  channels:string[], 
+  pairs:any, 
+  type:string, 
+  sequence:number,
+  id:string) => {
 
     let text = pako.inflate(evt.data, {
         to: 'string'
@@ -48,7 +48,7 @@ export const huobi = (
           "symbol_id": `HUOBIPRO_SPOT_${asset}_${base}`,
           "sequence": ++sequence,
           "time_exchange": resp.ts,
-          "time_wakedapi": Date.now(),
+          "time_interoracle": Date.now(),
           "uuid": id,
           "price": parseFloat(resp.price),
           "size": parseFloat(resp.amount),

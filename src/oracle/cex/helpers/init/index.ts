@@ -6,8 +6,8 @@ import { bitstamp } from './exchanges/bitstamp.init';
 import { coinbase } from './exchanges/coinbase.init';
 import { crypto } from './exchanges/crypto.init';
 import { ftx } from './exchanges/ftx.init';
-import { gate } from './exchanges/gate.init';
-import { huobi } from './exchanges/huobi.init';
+import { gateio } from './exchanges/gateio.init';
+import { huobipro } from './exchanges/huobipro.init';
 import { kraken } from './exchanges/kraken.init';
 import { kucoin } from './exchanges/kucoin.init';
 import { okex } from './exchanges/okex.init';
@@ -26,8 +26,8 @@ const index:IExchangeDir =  {
     "COINBASE": coinbase, 
     "CRYPTO": crypto, 
     "FTX": ftx, 
-    "GATE": gate, 
-    "HUOBI": huobi, 
+    "GATEIO": gateio, 
+    "HUOBIPRO": huobipro, 
     "KRAKEN": kraken, 
     "KUCOIN": kucoin, 
     "OKEX": okex, 

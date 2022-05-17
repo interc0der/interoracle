@@ -17,12 +17,13 @@ import { PriceArrayType } from 'types/request';
  */
 
 export const ftx = (
-    evt:any, 
-    channels:string[], 
-    pairs:any, 
-    type:string, 
-    sequence:number,
-    id:string) => {
+  ws:WebSocket, 
+  evt:any, 
+  channels:string[], 
+  pairs:any, 
+  type:string, 
+  sequence:number,
+  id:string) => {
 
     // Parse message from exchange
     const resp = JSON.parse(evt.data);
@@ -67,7 +68,7 @@ export const ftx = (
                 "symbol_id": `FTX_SPOT_${asset}_${base}`,
                 "sequence": ++sequence,
                 "time_exchange": new Date(resp.data[0].time).getTime(),
-                "time_wakedapi": Date.now(),
+                "time_interoracle": Date.now(),
                 "uuid": id,
                 "price": price,
                 "size": sum,

@@ -13,7 +13,7 @@
  * @returns 
  */ 
 export const crypto = (
-    ws:any, 
+    ws:WebSocket, 
     evt:any, 
     channels:string[], 
     pairs:any, 
@@ -46,7 +46,7 @@ export const crypto = (
                     "symbol_id": `CRYPTO_SPOT_${asset}_${base}`,
                     "sequence": ++sequence,
                     "time_exchange": data.t,
-                    "time_wakedapi": Date.now(),
+                    "time_interoracle": Date.now(),
                     "uuid": id,
                     "price": data.p,
                     "size": data.q,

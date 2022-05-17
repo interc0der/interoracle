@@ -9,7 +9,7 @@
  * @returns 
  */
 
-export const gate = (
+export const gateio = (
   input:string[]) => {
 
   let channels:string[] = [] = []

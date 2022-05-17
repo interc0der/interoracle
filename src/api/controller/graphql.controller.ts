@@ -1,6 +1,6 @@
 
 import express, { Express, Request, Response } from 'express'
-import { Interoracle } from '../../oracle/cex/helpers/ws'
+import  Interoracle  from '../../oracle/cex/interoracle'
 import constants from '../../oracle/cex/helpers/constants'
 import process from '../../oracle/cex/helpers/process'
 import { request } from '../../oracle/cex/index'

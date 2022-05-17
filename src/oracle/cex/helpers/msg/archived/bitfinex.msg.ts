@@ -1,72 +1,3 @@
-/* interface IBitfinexTradeRepsonse {
-    [
-        [
-            CHANNEL_ID: number
-            ID:string // 'te' (trade executed), 'tu' (trade execution update)
-            SYMBOL: //
-        ]
-      ]
-     
-}
- */
-
-/* // request
-{
-    "event": "subscribe",
-    "channel": CHANNEL_NAME
- }
- 
- // response
- {
-    "event": "subscribed",
-    "channel": CHANNEL_NAME,
-    "chanId": CHANNEL_ID
- }
- 
- // response-failure
- {
-    "event": "error",
-    "msg": ERROR_MSG,
-    "code": ERROR_CODE
- }
-
- //Info message
-
- {
-    "event": "info",
-    "version":  VERSION,
-    "platform": {
-       "status": 1
-    }
- }
-
- {
-    "event":"info",
-    "code": CODE,
-    "msg": MSG
- }
-
-
- // request
-{
-    "event":"ping",
-    "cid": 1234
- }
- 
- // response
- {
-    "event":"pong",
-    "ts": 1511545528111,
-    "cid": 1234
- }
-
- [ CHANNEL_ID, "hb" ]
-
- */
-
-// All trading pairs
-// https://api-pub.bitfinex.com/v2/conf/pub:list:pair:exchange
-
 /**
  * 
  * Bitfinex: Handle websocket message 
@@ -83,6 +14,7 @@
  */
 
 export const bitfinex = (
+    ws:any, 
     evt:any, 
     channels:string[], 
     pairs:any, 
@@ -122,7 +54,7 @@ export const bitfinex = (
                     "symbol_id": `BITFINEX_SPOT_${asset}_${base}`,
                     "sequence": ++sequence,
                     "time_exchange": msg[msg.length-3],
-                    "time_wakedapi": Date.now(),
+                    "time_interoracle": Date.now(),
                     "uuid": id,
                     "price": parseFloat(msg[msg.length-2]),
                     "size": Math.abs(msg[msg.length-1]),

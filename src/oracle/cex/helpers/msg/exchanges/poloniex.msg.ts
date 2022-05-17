@@ -12,14 +12,15 @@
  * @returns 
  */
 
-export const poloniex = (
-        tickers: string[][], 
+export const poloniex = ( 
+        ws:WebSocket, 
         evt:any, 
         channels:string[], 
         pairs:any, 
         type:string, 
         sequence:number,
-        id:string) => {
+        id:string,
+        tickers: string[][]) => {
 
     let msg = JSON.parse(evt.data);
 
@@ -37,7 +38,7 @@ export const poloniex = (
                 "symbol_id": `POLONIEX_SPOT_${asset}_${base}`,
                 "sequence": ++sequence,
                 "time_exchange": undefined,
-                "time_wakedapi": Date.now(),
+                "time_interoracle": Date.now(),
                 "uuid": id,
                 "price": parseFloat(msg[2][1]),
                 "size": undefined,

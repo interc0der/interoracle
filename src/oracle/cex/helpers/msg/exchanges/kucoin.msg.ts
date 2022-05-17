@@ -13,12 +13,13 @@
  */
 
 export const kucoin = (
+    ws:WebSocket, 
     evt:any, 
     channels:string[], 
     pairs:any, 
     type:string, 
     sequence:number,
-    id:string) => {
+    id:string ) => {
 
     try {
         const resp = JSON.parse(evt.data);
@@ -52,7 +53,7 @@ export const kucoin = (
                     "uuid": id,
                     "price": parseFloat(resp.data.price),
                     "size": parseFloat(resp.data.size),
-                    //"taker_side": taker
+                    "taker_side": undefined
                   })
                    
               }

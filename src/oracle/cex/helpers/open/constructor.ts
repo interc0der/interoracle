@@ -21,14 +21,13 @@ const exchanges = readdirSync(SOURCE_FOLDER)
 var mapContent = [
     exchanges
         .map((exchange) => {
-        return "import { " + exchange + " } from './exchanges/" + exchange + ".msg';";
+        return "import { " + exchange + " } from './exchanges/" + exchange + ".open';";
     })
         .join('\n'),
     '',
-    'interface IExchangeDir {',
-        '[index: string]:',
-        '(ws: WebSocket, evt: any, channels: string[], pairs: string[], type: string, sequence: number, id: string, tickers: string[][]) =>',
-        '{type: string; symbol_id: string; sequence: number; time_exchange: number | undefined; time_interoracle: number; uuid: string; price: number;size: number | undefined; taker_side: string | undefined; }| undefined}',
+    'interface IExchangeDir {', 
+    '[index: string]:(ws: WebSocket, channels: string[]) => void',
+    '}',
     '',
     'const index:IExchangeDir =  {',
     exchanges

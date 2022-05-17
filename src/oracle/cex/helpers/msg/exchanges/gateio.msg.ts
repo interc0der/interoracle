@@ -13,7 +13,8 @@
  * @returns 
  */
 
-export const gate = (
+export const gateio = (
+    ws:WebSocket, 
     evt:any, 
     channels:string[], 
     pairs:any, 
@@ -37,7 +38,7 @@ export const gate = (
                     "symbol_id": `GATEIO_SPOT_${asset}_${base}`,
                     "sequence": ++sequence,
                     "time_exchange": data.time,
-                    "time_wakedapi": Date.now(),
+                    "time_interoracle": Date.now(),
                     "uuid": id,
                     "price": parseFloat(data.price),
                     "size": parseFloat(data.amount),

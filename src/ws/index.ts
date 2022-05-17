@@ -44,7 +44,6 @@ class InteroracleWS {
             return; // TODO: handle malformed JSON
         }
 
-        let api;
         switch (message.type) {
             case 'pong':
                     sender.lastBeat = Date.now();
@@ -52,7 +51,7 @@ class InteroracleWS {
             case 'subscribe': 
                     sender.lastBeat = Date.now();
                     if (this.peerSockets[sender.id]) this._removePeerSockets(sender)
-                    let sockets = init(sender, message, message.subscribe_filter_symbol_id)
+                    let sockets = init(sender, message)
                     this.peerSockets[sender.id] = sockets
                     break;    
       }

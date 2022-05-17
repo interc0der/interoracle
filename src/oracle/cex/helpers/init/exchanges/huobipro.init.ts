@@ -9,7 +9,7 @@
  */
 
 
-export const huobi = (
+export const huobipro = (
   input:string[]) => {
 
   let channels:string[] = [] 

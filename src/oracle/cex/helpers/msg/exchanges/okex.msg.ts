@@ -13,12 +13,13 @@
  */
 
 export const okex = (
-    evt:any, 
-    channels:string[], 
-    pairs:any, 
-    type:string, 
-    sequence:number,
-    id:string ) => {
+  ws:WebSocket, 
+  evt:any, 
+  channels:string[], 
+  pairs:any, 
+  type:string, 
+  sequence:number,
+  id:string) => {
 
     // Parse message from exchange
     let msg = JSON.parse(evt.data)
@@ -53,7 +54,7 @@ export const okex = (
             "symbol_id": `OKEX_SPOT_${asset}_${base}`,
             "sequence": ++sequence,
             "time_exchange": parseFloat(data.ts),
-            "time_wakedapi": Date.now(),
+            "time_interoracle": Date.now(),
             "uuid": id,
             "price": parseFloat(data.px),
             "size": parseFloat(quantity),

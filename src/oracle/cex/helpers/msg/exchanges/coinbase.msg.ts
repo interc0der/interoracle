@@ -14,6 +14,7 @@
  */
 
 export const coinbase = (
+  ws:WebSocket, 
   evt:any, 
   channels:string[], 
   pairs:any, 

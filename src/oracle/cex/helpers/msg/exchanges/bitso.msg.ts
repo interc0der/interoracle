@@ -46,12 +46,13 @@ type IBitsoResponse = IBitsoTradeRepsonse | IBitsoServerRepsonse | IBitsoKeepAli
 
 
 export const bitso = (
-      evt:any, 
-      channels:string[], 
-      pairs:any, 
-      type:string, 
-      sequence:number,
-      id:string) => {
+    ws:WebSocket, 
+    evt:any, 
+    channels:string[], 
+    pairs:any, 
+    type:string, 
+    sequence:number,
+    id:string) => {
 
       try {
           // Parse message from exchange
@@ -87,7 +88,7 @@ export const bitso = (
                         "symbol_id": symbol,
                         "sequence": ++sequence,
                         "time_exchange": undefined,
-                        "time_wakedapi": Date.now(),
+                        "time_interoracle": Date.now(),
                         "uuid": id,
                         "price": price,
                         "size": size,
