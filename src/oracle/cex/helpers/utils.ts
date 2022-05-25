@@ -111,72 +111,89 @@ const organizeByCurrency = (input:Request) => {
 }
         
     
+/**
+ * 
+ * getPairIndices
+ * Get the index of each exchange pair 
+ * Used for getting pair slot in its respective data matrix
+ * 
+ * @param { Array } channels 
+ * @param { Any } pairs 
+ * @returns { Array } Dual array of array of formatted pairs and array of correlated index, respectively
+ */
+const getPairIndices = async (channels:string[], pairs:any) => {
+
+        let process = pairs.map((pair:string[], index:number) => {
+        if (index==0) return
+        return pair.join("_")
+    }).filter(Boolean)
+
+    let xrpChannels = channels.map((channel) => {if (channel.indexOf("XRP") > -1) {return channel} else return }).filter(Boolean)
+    let ltcChannels = channels.map((channel) => {if (channel.indexOf("LTC") > -1) {return channel} else return }).filter(Boolean)
+    let adaChannels = channels.map((channel) => {if (channel.indexOf("ADA") > -1) {return channel} else return }).filter(Boolean)
+    let algoChannels = channels.map((channel) => {if (channel.indexOf("ALGO") > -1) {return channel} else return }).filter(Boolean)
+    let btcChannels = channels.map((channel) => {if (channel.indexOf("BTC") > -1) {return channel} else return }).filter(Boolean)
+    let ethChannels = channels.map((channel) => {if (channel.indexOf("ETH") > -1) {return channel} else return }).filter(Boolean)
+    let bchChannels = channels.map((channel) => {if (channel.indexOf("BCH") > -1) {return channel} else return }).filter(Boolean)
+    let dogeChannels = channels.map((channel) => {if (channel.indexOf("DOGE") > -1) {return channel} else return }).filter(Boolean)
+    let xlmChannels = channels.map((channel) => {if (channel.indexOf("XLM") > -1) {return channel} else return }).filter(Boolean)
+    let dgbChannels = channels.map((channel) => {if (channel.indexOf("DGB") > -1) {return channel} else return }).filter(Boolean)
+    let filChannels = channels.map((channel) => {if (channel.indexOf("FIL") > -1) {return channel} else return }).filter(Boolean)
     
-    const getPairIndices = async (channels:string[], pairs:any) => {
-    
-         let process = pairs.map((pair:string[], index:number) => {
-            if (index==0) return
-            return pair.join("_")
-        }).filter(Boolean)
-    
-        let xrpChannels = channels.map((channel) => {if (channel.indexOf("XRP") > -1) {return channel} else return }).filter(Boolean)
-        let ltcChannels = channels.map((channel) => {if (channel.indexOf("LTC") > -1) {return channel} else return }).filter(Boolean)
-        let adaChannels = channels.map((channel) => {if (channel.indexOf("ADA") > -1) {return channel} else return }).filter(Boolean)
-        let algoChannels = channels.map((channel) => {if (channel.indexOf("ALGO") > -1) {return channel} else return }).filter(Boolean)
-        let btcChannels = channels.map((channel) => {if (channel.indexOf("BTC") > -1) {return channel} else return }).filter(Boolean)
-        let ethChannels = channels.map((channel) => {if (channel.indexOf("ETH") > -1) {return channel} else return }).filter(Boolean)
-        let bchChannels = channels.map((channel) => {if (channel.indexOf("BCH") > -1) {return channel} else return }).filter(Boolean)
-        let dogeChannels = channels.map((channel) => {if (channel.indexOf("DOGE") > -1) {return channel} else return }).filter(Boolean)
-        let xlmChannels = channels.map((channel) => {if (channel.indexOf("XLM") > -1) {return channel} else return }).filter(Boolean)
-        let dgbChannels = channels.map((channel) => {if (channel.indexOf("DGB") > -1) {return channel} else return }).filter(Boolean)
-        let filChannels = channels.map((channel) => {if (channel.indexOf("FIL") > -1) {return channel} else return }).filter(Boolean)
-        
-        let escapeRegExpMatch = (s:string) => {
-            return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
-          };
-    
-        let isExactMatch = (str:string, match:string) => {
-          return new RegExp(`\\b${escapeRegExpMatch(match)}\\b`).test(str)
-          }
-    
-        let array:number[] = []
-        channels.forEach((channel:string) => {
-            process.forEach((pair:string) => {
-                if (isExactMatch(channel, pair) == true) {
-                    if (channel.indexOf("XRP")> -1) array.push(xrpChannels.indexOf(channel))
-                    if (channel.indexOf("LTC")> -1) array.push(ltcChannels.indexOf(channel))
-                    if (channel.indexOf("BTC")> -1) array.push(btcChannels.indexOf(channel))
-                    if (channel.indexOf("ETH")> -1) array.push(ethChannels.indexOf(channel))
-                    if (channel.indexOf("XLM")> -1) array.push(xlmChannels.indexOf(channel))
-                    if (channel.indexOf("ADA")> -1) array.push(adaChannels.indexOf(channel))
-                    if (channel.indexOf("ALGO")> -1) array.push(algoChannels.indexOf(channel))
-                    if (channel.indexOf("DGB")> -1) array.push(dgbChannels.indexOf(channel))
-                    if (channel.indexOf("BCH")> -1) array.push(bchChannels.indexOf(channel))
-                    if (channel.indexOf("FIL")> -1) array.push(filChannels.indexOf(channel))
-                    if (channel.indexOf("DOGE")> -1) array.push(dogeChannels.indexOf(channel))
-                  }
-            })
+    let escapeRegExpMatch = (s:string) => {
+        return s.replace(/[-\/\\^$*+?.()|[\]{}]/g, '\\$&');
+        };
+
+    let isExactMatch = (str:string, match:string) => {
+        return new RegExp(`\\b${escapeRegExpMatch(match)}\\b`).test(str)
+        }
+
+    let array:number[] = []
+    channels.forEach((channel:string) => {
+        process.forEach((pair:string) => {
+            if (isExactMatch(channel, pair) == true) {
+                if (channel.indexOf("XRP")> -1) array.push(xrpChannels.indexOf(channel))
+                if (channel.indexOf("LTC")> -1) array.push(ltcChannels.indexOf(channel))
+                if (channel.indexOf("BTC")> -1) array.push(btcChannels.indexOf(channel))
+                if (channel.indexOf("ETH")> -1) array.push(ethChannels.indexOf(channel))
+                if (channel.indexOf("XLM")> -1) array.push(xlmChannels.indexOf(channel))
+                if (channel.indexOf("ADA")> -1) array.push(adaChannels.indexOf(channel))
+                if (channel.indexOf("ALGO")> -1) array.push(algoChannels.indexOf(channel))
+                if (channel.indexOf("DGB")> -1) array.push(dgbChannels.indexOf(channel))
+                if (channel.indexOf("BCH")> -1) array.push(bchChannels.indexOf(channel))
+                if (channel.indexOf("FIL")> -1) array.push(filChannels.indexOf(channel))
+                if (channel.indexOf("DOGE")> -1) array.push(dogeChannels.indexOf(channel))
+                }
         })
-        return [process, array]
-    }
+    })
+    return [process, array]
+}
     
+/**
+ * 
+ * getTickers
+ * Get array of exchange formatted tickers and link them to interoracle formatted tickers
+ * Primarily used for parsing and internal organizing of incoming trades
+ * 
+ * @param { Array } channels 
+ * @returns { Array } Array of exchange tickers/id and index link to channels
+ */ 
+const getTickers = async (channels:string[]) => {
+
+    let poloniex_api = "https://poloniex.com/public?command=returnTicker"
+    let poloniex_id = await axios.get ( poloniex_api ) ;
+    let idArray = Object.entries(poloniex_id.data);
     
-    const getTickers = async (channels:string[]) => {
+    let tickerKey:string[][] = channels.map((ticker:string) => {
+            let index:any = idArray.find((entry) => entry[0] == ticker)
+            let returnData:string[] = []
+            if (index == undefined ) returnData = [ticker, '']
+            if (index != undefined ) returnData = [ticker, index[1].id]
+            return returnData
+    })
     
-        let poloniex_api = "https://poloniex.com/public?command=returnTicker"
-        let poloniex_id = await axios.get ( poloniex_api ) ;
-        let idArray = Object.entries(poloniex_id.data);
-      
-        let tickerKey:string[][] = channels.map((ticker:string) => {
-                let index:any = idArray.find((entry) => entry[0] == ticker)
-                let returnData:string[] = []
-                if (index == undefined ) returnData = [ticker, '']
-                if (index != undefined ) returnData = [ticker, index[1].id]
-                return returnData
-        })
-      
-       return tickerKey
-    }
+    return tickerKey
+}
 
 /**
  * 

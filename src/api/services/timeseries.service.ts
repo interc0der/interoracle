@@ -76,10 +76,10 @@ const getPriceAtInterval = async (
             {
               '$match': {
                 '$or': matchArray,
-                'timestamp': {         
+/*                 'timestamp': {         
                   '$gte': new Date('2022-05-15T00:00:00Z'),
                   '$lt': new Date('2022-05-15T24:00:00Z')
-                  }
+                  } */
                 }
             }, 
             {
@@ -110,11 +110,11 @@ const getPriceAtInterval = async (
                     'interval': -1, 
                     'first': -1
                 }
-          }, {
+          }/* , {
             '$skip': (page-1)*50
           }, {
             '$limit': 50
-          } 
+          }  */
         ]
     );
     return time  

@@ -8,7 +8,7 @@ import { request } from '../../oracle/cex/index'
 import { tempFilterExchange } from '../../../types'
 
 const getAllExchanges  = () => {
-    let clean:any =  process.organizeByExchange(request)
+    let clean:any = process.organizeByExchange(request)
     let array = clean.map((exchange: string[][]) => {
         return exchange[1][0]
     })
